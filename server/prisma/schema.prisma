@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  name          String
+  email         String    @unique
+  title         String
+  organization  String
+  passwordHash  String?
+  suspendedAt   DateTime?
+  createdAt     DateTime  @default(now())
+
+  ownedGroups       Group[]       @relation("GroupOwner")
+  memberships       GroupMember[] @relation("MemberUser")
+  addedMembers      GroupMember[] @relation("AddedBy")
+  removedMembers    GroupMember[] @relation("RemovedBy")
+}
+
+model Group {
+  id              Int       @id @default(autoincrement())
+  name            String
+  description     String
+  ownerId         Int
+  openMembership  Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+
+  owner   User          @relation("GroupOwner", fields: [ownerId], references: [id])
+  members GroupMember[]
+}
+
+model GroupMember {
+  id          Int       @id @default(autoincrement())
+  groupId     Int
+  userId      Int
+  addedById   Int
+  addedAt     DateTime  @default(now())
+  removedById Int?
+  removedAt   DateTime?
+
+  group     Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User  @relation("MemberUser", fields: [userId], references: [id])
+  addedBy   User  @relation("AddedBy", fields: [addedById], references: [id])
+  removedBy User? @relation("RemovedBy", fields: [removedById], references: [id])
+}

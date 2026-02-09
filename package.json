@@ -1,0 +1,23 @@
+{
+  "name": "groups-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "install:all": "cd server && npm install && cd ../client && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zack-burgess/groups-manager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/zack-burgess/groups-manager/issues"
+  },
+  "homepage": "https://github.com/zack-burgess/groups-manager#readme"
+}
