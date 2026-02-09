@@ -33,7 +33,7 @@ export default function Profile() {
     <>
       <Banner />
       <div className="page">
-        {!isOwnProfile && (
+        {id && (
           <button className="btn-back" onClick={() => navigate(-1)}>← Back</button>
         )}
         <div className="profile-card">

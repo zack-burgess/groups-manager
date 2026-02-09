@@ -75,6 +75,18 @@ router.post("/signup", async (req: Request, res: Response) => {
     data: { email, name, title, organization },
   });
 
+  // Auto-join the R&D group if it exists
+  const rndGroup = await prisma.group.findFirst({ where: { name: "R&D" } });
+  if (rndGroup) {
+    await prisma.groupMember.create({
+      data: {
+        groupId: rndGroup.id,
+        userId: user.id,
+        addedById: user.id,
+      },
+    });
+  }
+
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
     expiresIn: "7d",
   });

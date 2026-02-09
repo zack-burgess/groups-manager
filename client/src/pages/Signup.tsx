@@ -7,8 +7,8 @@ export default function Signup() {
   const location = useLocation();
   const email = (location.state as { email?: string })?.email || "";
   const [name, setName] = useState("");
-  const [title, setTitle] = useState("");
-  const [organization, setOrganization] = useState("");
+  const [title, setTitle] = useState("Hiring Manager");
+  const [organization, setOrganization] = useState("Research & Development");
   const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();

@@ -110,6 +110,19 @@
   margin-bottom: 0.5rem;
 }
 
+/* Form fields */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.form-field label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+}
+
 /* Inputs */
 input[type="text"],
 input[type="email"],

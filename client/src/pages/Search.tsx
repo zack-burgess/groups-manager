@@ -21,7 +21,7 @@ export default function Search() {
   const [query, setQuery] = useState(initialQuery);
   const [people, setPeople] = useState<PersonResult[]>([]);
   const [groups, setGroups] = useState<GroupResult[]>([]);
-  const [searched, setSearched] = useState(false);
+  const [searched, setSearched] = useState(!!initialQuery);
 
   const runSearch = useCallback(async (q: string) => {
     const [peopleResults, groupResults] = await Promise.all([
