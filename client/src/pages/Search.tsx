@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { api } from "../api";
 import Banner from "../components/Banner";
+import GroupIcon from "../components/GroupIcon";
+import PersonIcon from "../components/PersonIcon";
 
 interface PersonResult {
   id: number;
@@ -12,6 +14,7 @@ interface PersonResult {
 interface GroupResult {
   id: number;
   name: string;
+  memberCount: number;
 }
 
 export default function Search() {
@@ -74,8 +77,9 @@ export default function Search() {
             <div className="list">
               {people.length === 0 && <p className="empty">No people found.</p>}
               {people.map((person) => (
-                <Link key={person.id} to={`/profile/${person.id}`} className="list-item">
-                  {person.name} · {person.title}
+                <Link key={person.id} to={`/profile/${person.id}`} className="list-item person-list-item">
+                  <span className="person-list-name"><PersonIcon size={16} /> {person.name}</span>
+                  <span className="group-list-meta">{person.title}</span>
                 </Link>
               ))}
             </div>
@@ -84,8 +88,9 @@ export default function Search() {
             <div className="list">
               {groups.length === 0 && <p className="empty">No groups found.</p>}
               {groups.map((group) => (
-                <Link key={group.id} to={`/groups/${group.id}`} className="list-item">
-                  {group.name}
+                <Link key={group.id} to={`/groups/${group.id}`} className="list-item group-list-item">
+                  <span className="group-list-name"><GroupIcon size={16} /> {group.name}</span>
+                  <span className="group-list-meta">{group.memberCount} {group.memberCount === 1 ? "member" : "members"}</span>
                 </Link>
               ))}
             </div>

@@ -229,6 +229,9 @@ button {
 .profile-card h2 {
   font-size: 1.4rem;
   margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .profile-card p {
@@ -286,13 +289,29 @@ button {
   justify-content: space-between;
 }
 
-.member-item a {
+.member-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   color: #1a1a2e;
   text-decoration: none;
 }
 
-.member-item a:hover {
+.member-link:hover {
   color: #4a6cf7;
+}
+
+/* Person list items */
+.person-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.person-list-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .remove-btn {
@@ -306,6 +325,24 @@ button {
 
 .remove-btn:hover {
   color: #e74c3c;
+}
+
+/* Group list items */
+.group-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.group-list-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.group-list-meta {
+  font-size: 0.8rem;
+  color: #888;
 }
 
 /* Add member */

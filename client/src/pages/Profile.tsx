@@ -4,6 +4,8 @@ import { api } from "../api";
 import type { UserProfile } from "../api";
 import { useAuth } from "../auth";
 import Banner from "../components/Banner";
+import GroupIcon from "../components/GroupIcon";
+import PersonIcon from "../components/PersonIcon";
 
 export default function Profile() {
   const { id } = useParams();
@@ -37,7 +39,7 @@ export default function Profile() {
           <button className="btn-back" onClick={() => navigate(-1)}>← Back</button>
         )}
         <div className="profile-card">
-          <h2>{profile.name}</h2>
+          <h2><PersonIcon size={22} /> {profile.name}</h2>
           <p>{profile.title}</p>
           <p>{profile.organization}</p>
           <p className="email">{profile.email}</p>
@@ -55,8 +57,9 @@ export default function Profile() {
         <div className="list">
           {profile.groups.length === 0 && <p className="empty">No groups yet.</p>}
           {profile.groups.map((group) => (
-            <Link key={group.id} to={`/groups/${group.id}`} className="list-item">
-              {group.name}
+            <Link key={group.id} to={`/groups/${group.id}`} className="list-item group-list-item">
+              <span className="group-list-name"><GroupIcon size={16} /> {group.name}</span>
+              <span className="group-list-meta">{group.memberCount} {group.memberCount === 1 ? "member" : "members"}</span>
             </Link>
           ))}
         </div>

@@ -73,7 +73,7 @@ export const api = {
     delete: (id: number) =>
       request<{ success: boolean }>(`/groups/${id}`, { method: "DELETE" }),
     search: (q: string) =>
-      request<{ id: number; name: string }[]>(
+      request<{ id: number; name: string; memberCount: number }[]>(
         `/groups/search?q=${encodeURIComponent(q)}`
       ),
     addMember: (groupId: number, userId: number) =>
@@ -94,7 +94,7 @@ export interface UserProfile {
   email: string;
   title: string;
   organization: string;
-  groups: { id: number; name: string }[];
+  groups: { id: number; name: string; memberCount: number }[];
 }
 
 export interface Group {

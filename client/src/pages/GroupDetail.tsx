@@ -4,6 +4,8 @@ import { api } from "../api";
 import type { GroupDetail as GroupDetailType } from "../api";
 import { useAuth } from "../auth";
 import Banner from "../components/Banner";
+import GroupIcon from "../components/GroupIcon";
+import PersonIcon from "../components/PersonIcon";
 
 export default function GroupDetail() {
   const { id } = useParams();
@@ -63,7 +65,7 @@ export default function GroupDetail() {
         <button className="btn-back" onClick={() => navigate(-1)}>← Back</button>
         <div className="group-header">
           <div className="section-header">
-            <h2>{group.name}</h2>
+            <h2><GroupIcon size={22} /> {group.name}</h2>
             {isOwner && (
               <button className="btn-secondary" onClick={() => navigate(`/groups/${id}/edit`)}>
                 Edit
@@ -80,7 +82,7 @@ export default function GroupDetail() {
         <div className="list">
           {group.members.map((member) => (
             <div key={member.id} className="list-item member-item">
-              <Link to={`/profile/${member.id}`}>{member.name}</Link>
+              <Link to={`/profile/${member.id}`} className="member-link"><PersonIcon size={16} /> {member.name}</Link>
               {(isOwner || member.id === user?.id) && (
                 <button
                   className="remove-btn"
@@ -109,7 +111,7 @@ export default function GroupDetail() {
                 <div className="member-results">
                   {memberResults.map((person) => (
                     <div key={person.id} className="member-result-item">
-                      <span>{person.name} · {person.title}</span>
+                      <span className="member-link"><PersonIcon size={14} /> {person.name} · {person.title}</span>
                       <button onClick={() => handleAddMember(person.id)}>Add</button>
                     </div>
                   ))}

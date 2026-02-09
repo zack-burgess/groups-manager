@@ -12,7 +12,13 @@ router.get("/me", async (req: AuthRequest, res: Response) => {
       ownedGroups: true,
       memberships: {
         where: { removedAt: null },
-        include: { group: true },
+        include: {
+          group: {
+            include: {
+              members: { where: { removedAt: null }, select: { id: true } },
+            },
+          },
+        },
       },
     },
   });
@@ -22,7 +28,11 @@ router.get("/me", async (req: AuthRequest, res: Response) => {
     return;
   }
 
-  const groups = user.memberships.map((m) => m.group);
+  const groups = user.memberships.map((m) => ({
+    id: m.group.id,
+    name: m.group.name,
+    memberCount: m.group.members.length,
+  }));
   res.json({
     id: user.id,
     name: user.name,
@@ -61,7 +71,13 @@ router.get("/:id", async (req: AuthRequest, res: Response) => {
     include: {
       memberships: {
         where: { removedAt: null },
-        include: { group: true },
+        include: {
+          group: {
+            include: {
+              members: { where: { removedAt: null }, select: { id: true } },
+            },
+          },
+        },
       },
     },
   });
@@ -71,7 +87,11 @@ router.get("/:id", async (req: AuthRequest, res: Response) => {
     return;
   }
 
-  const groups = user.memberships.map((m) => m.group);
+  const groups = user.memberships.map((m) => ({
+    id: m.group.id,
+    name: m.group.name,
+    memberCount: m.group.members.length,
+  }));
   res.json({
     id: user.id,
     name: user.name,

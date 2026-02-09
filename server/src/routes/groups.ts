@@ -44,10 +44,16 @@ router.get("/search", async (req: AuthRequest, res: Response) => {
     where: {
       name: { contains: q },
     },
-    select: { id: true, name: true },
+    include: {
+      members: { where: { removedAt: null }, select: { id: true } },
+    },
   });
 
-  res.json(groups);
+  res.json(groups.map((g) => ({
+    id: g.id,
+    name: g.name,
+    memberCount: g.members.length,
+  })));
 });
 
 router.get("/:id", async (req: AuthRequest, res: Response) => {

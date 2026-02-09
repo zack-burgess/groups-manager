@@ -4,6 +4,8 @@ A groups management app for employees at a company. Users can log in, view profi
 
 Shaped and vibe-coded by [Zack Burgess](https://github.com/zack-burgess) and [Claude](https://claude.ai)
 
+![Groups Manager Screenshot](./docs/screenshot.png)
+
 This project was shaped using [breadboarding](https://basecamp.com/shapeup/1.3-chapter-04) from Shape Up. The full design — including all flows, places, affordances, and UI sketches — is documented in [DESIGN.md](./DESIGN.md).
 
 ## Getting Started
