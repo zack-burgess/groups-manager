@@ -154,10 +154,10 @@ export async function seed() {
     },
   });
 
-  // R&D-designers — owned by Jane
+  // Designers — owned by Jane
   await prisma.group.create({
     data: {
-      name: "R&D-designers",
+      name: "Designers",
       description: "Design team coordination and reviews.",
       ownerId: jane.id,
       openMembership: false,
@@ -169,16 +169,31 @@ export async function seed() {
     },
   });
 
-  // R&D-engineers — owned by Maria (Engineering Manager)
+  // Engineers — owned by Maria (Engineering Manager)
   await prisma.group.create({
     data: {
-      name: "R&D-engineers",
+      name: "Engineers",
       description: "Engineering discussions, code reviews, and architecture.",
       ownerId: maria.id,
       openMembership: false,
       members: {
         createMany: {
-          data: [maria, alex].map((u) => ({ userId: u.id, addedById: maria.id })),
+          data: [maria, alex, zack].map((u) => ({ userId: u.id, addedById: maria.id })),
+        },
+      },
+    },
+  });
+
+  // Product Managers — owned by Zack
+  await prisma.group.create({
+    data: {
+      name: "Product Managers",
+      description: "Product strategy, roadmaps, and prioritization.",
+      ownerId: zack.id,
+      openMembership: false,
+      members: {
+        createMany: {
+          data: [zack, sam].map((u) => ({ userId: u.id, addedById: zack.id })),
         },
       },
     },
@@ -230,6 +245,6 @@ export async function seed() {
     },
   });
 
-  console.log(`Seeded ${everyone.length} users and 7 groups`);
+  console.log(`Seeded ${everyone.length} users and 8 groups`);
 
 }
