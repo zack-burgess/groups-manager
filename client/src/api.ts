@@ -114,6 +114,14 @@ export const api = {
       request<{ success: boolean }>(`/groups/${groupId}/members/${userId}`, {
         method: "DELETE",
       }),
+    promoteAdmin: (groupId: number, userId: number) =>
+      request<{ success: boolean }>(`/groups/${groupId}/members/${userId}/promote`, {
+        method: "POST",
+      }),
+    demoteAdmin: (groupId: number, userId: number) =>
+      request<{ success: boolean }>(`/groups/${groupId}/members/${userId}/demote`, {
+        method: "POST",
+      }),
   },
 };
 

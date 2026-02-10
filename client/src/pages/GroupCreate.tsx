@@ -62,6 +62,7 @@ export default function GroupForm() {
     <>
       <Banner />
       <div className="page">
+        <h2>{isEdit ? "Edit Group" : "Create Group"}</h2>
         <form className="group-form" onSubmit={handleSubmit}>
           <input
             type="text"
@@ -96,7 +97,12 @@ export default function GroupForm() {
               </button>
             </div>
           </div>
-          <p className="owner-label">Owner: {isEdit ? group?.owner.name : user?.name}</p>
+          <p className="owner-label">
+            {isEdit
+              ? `${(group?.members.filter((m) => m.isAdmin).length ?? 0) === 1 ? "Admin" : "Admins"}: ${group?.members.filter((m) => m.isAdmin).map((m) => m.name).join(", ")}`
+              : `Admin: ${user?.name}`
+            }
+          </p>
           {error && <p className="error">{error}</p>}
           <div className="form-actions">
             <button type="button" className="btn-secondary" onClick={() => navigate(-1)}>

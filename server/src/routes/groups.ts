@@ -187,6 +187,65 @@ router.post("/:id/members", async (req: AuthRequest, res: Response) => {
   res.status(201).json(member.user);
 });
 
+router.post("/:id/members/:userId/promote", async (req: AuthRequest, res: Response) => {
+  const groupId = parseInt(req.params.id as string);
+  const userId = parseInt(req.params.userId as string);
+
+  if (!(await isGroupAdmin(req.userId!, groupId))) {
+    res.status(403).json({ error: "Only admins can promote members" });
+    return;
+  }
+
+  const membership = await prisma.groupMember.findFirst({
+    where: { groupId, userId, removedAt: null },
+    orderBy: { addedAt: "desc" },
+  });
+
+  if (!membership) {
+    res.status(404).json({ error: "User is not a current member" });
+    return;
+  }
+
+  await prisma.groupMember.update({
+    where: { id: membership.id },
+    data: { isAdmin: true },
+  });
+
+  res.json({ success: true });
+});
+
+router.post("/:id/members/:userId/demote", async (req: AuthRequest, res: Response) => {
+  const groupId = parseInt(req.params.id as string);
+  const userId = parseInt(req.params.userId as string);
+
+  if (!(await isGroupAdmin(req.userId!, groupId))) {
+    res.status(403).json({ error: "Only admins can demote members" });
+    return;
+  }
+
+  const membership = await prisma.groupMember.findFirst({
+    where: { groupId, userId, removedAt: null },
+    orderBy: { addedAt: "desc" },
+  });
+
+  if (!membership) {
+    res.status(404).json({ error: "User is not a current member" });
+    return;
+  }
+
+  if (!membership.isAdmin) {
+    res.status(400).json({ error: "User is not an admin" });
+    return;
+  }
+
+  await prisma.groupMember.update({
+    where: { id: membership.id },
+    data: { isAdmin: false },
+  });
+
+  res.json({ success: true });
+});
+
 router.delete("/:id/members/:userId", async (req: AuthRequest, res: Response) => {
   const groupId = parseInt(req.params.id as string);
   const userId = parseInt(req.params.userId as string);
@@ -197,6 +256,22 @@ router.delete("/:id/members/:userId", async (req: AuthRequest, res: Response) =>
     return;
   }
 
+  // Don't allow removing admins
+  const targetMembership = await prisma.groupMember.findFirst({
+    where: { groupId, userId, removedAt: null },
+    orderBy: { addedAt: "desc" },
+  });
+
+  if (!targetMembership) {
+    res.status(404).json({ error: "User is not a current member" });
+    return;
+  }
+
+  if (targetMembership.isAdmin && userId !== req.userId) {
+    res.status(403).json({ error: "Cannot remove an admin from the group" });
+    return;
+  }
+
   const isAdmin = await isGroupAdmin(req.userId!, groupId);
   const isRemovingSelf = userId === req.userId;
   if (!isAdmin && !isRemovingSelf) {
@@ -204,18 +279,8 @@ router.delete("/:id/members/:userId", async (req: AuthRequest, res: Response) =>
     return;
   }
 
-  const latestMembership = await prisma.groupMember.findFirst({
-    where: { groupId, userId, removedAt: null },
-    orderBy: { addedAt: "desc" },
-  });
-
-  if (!latestMembership) {
-    res.status(404).json({ error: "User is not a current member" });
-    return;
-  }
-
   await prisma.groupMember.update({
-    where: { id: latestMembership.id },
+    where: { id: targetMembership.id },
     data: {
       removedAt: new Date(),
       removedById: req.userId,

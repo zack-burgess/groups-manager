@@ -359,6 +359,14 @@ button {
   font-size: 0.85rem;
 }
 
+.member-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 175px;
+  justify-content: space-between;
+}
+
 .remove-btn {
   background: none;
   border: none;
@@ -370,6 +378,59 @@ button {
 
 .remove-btn:hover {
   color: #e74c3c;
+}
+
+/* Fast tooltip */
+.has-tooltip {
+  position: relative;
+}
+
+.has-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 4px;
+  background: #333;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s 0.3s;
+}
+
+.has-tooltip:hover::after {
+  opacity: 1;
+}
+
+.admin-action-btn,
+.admin-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.admin-action-btn {
+  background: none;
+  border: 1px solid #ddd;
+  color: #555;
+  cursor: pointer;
+}
+
+.admin-action-btn:hover {
+  background: #f0f0f0;
+  border-color: #ccc;
+}
+
+.admin-badge {
+  color: #4a6cf7;
+  background: #eef1fe;
+  border: 1px solid transparent;
 }
 
 /* Group list items */

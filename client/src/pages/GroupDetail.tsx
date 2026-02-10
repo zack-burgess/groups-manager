@@ -17,8 +17,8 @@ export default function GroupDetail() {
   const [memberSearch, setMemberSearch] = useState("");
   const [memberResults, setMemberResults] = useState<{ id: number; name: string; title: string }[]>([]);
 
-  const isOwner = group?.owner.id === user?.id;
-  const canManageMembers = isOwner || !!group?.openMembership;
+  const isAdmin = group?.members.some((m) => m.id === user?.id && m.isAdmin) ?? false;
+  const canManageMembers = isAdmin || !!group?.openMembership;
 
   useEffect(() => {
     loadGroup();
@@ -35,6 +35,16 @@ export default function GroupDetail() {
 
   const handleRemoveMember = async (userId: number) => {
     await api.groups.removeMember(Number(id), userId);
+    loadGroup();
+  };
+
+  const handlePromoteMember = async (userId: number) => {
+    await api.groups.promoteAdmin(Number(id), userId);
+    loadGroup();
+  };
+
+  const handleDemoteMember = async (userId: number) => {
+    await api.groups.demoteAdmin(Number(id), userId);
     loadGroup();
   };
 
@@ -66,32 +76,65 @@ export default function GroupDetail() {
         <div className="group-header">
           <div className="section-header">
             <h2><GroupIcon size={22} /> {group.name}</h2>
-            {isOwner && (
+            {isAdmin && (
               <button className="btn-secondary" onClick={() => navigate(`/groups/${id}/edit`)}>
-                Edit
+                Edit Group
               </button>
             )}
           </div>
           <p className="group-description">{group.description}</p>
           <p>
-            Owner: <Link to={`/profile/${group.owner.id}`}>{group.owner.name}</Link>
+            {group.members.filter((m) => m.isAdmin).length === 1 ? "Admin" : "Admins"}:{" "}
+            {group.members.filter((m) => m.isAdmin).map((m, i, arr) => (
+              <span key={m.id}>
+                <Link to={`/profile/${m.id}`}>{m.name}</Link>
+                {i < arr.length - 1 ? ", " : ""}
+              </span>
+            ))}
           </p>
         </div>
 
         <h3>Members ({group.members.length})</h3>
         <div className="list">
-          {group.members.map((member) => (
+          {[...group.members].sort((a, b) => Number(b.isAdmin) - Number(a.isAdmin)).map((member) => (
             <div key={member.id} className="list-item member-item">
-              <Link to={`/profile/${member.id}`} className="member-link"><PersonIcon size={16} /> {member.name} <span className="member-title">· {member.title}</span></Link>
-              {(isOwner || member.id === user?.id) && (
-                <button
-                  className="remove-btn"
-                  onClick={() => handleRemoveMember(member.id)}
-                  title={member.id === user?.id ? "Leave group" : "Remove member"}
-                >
-                  ✕
-                </button>
-              )}
+              <Link to={`/profile/${member.id}`} className="member-link">
+                <PersonIcon size={16} /> {member.name}
+                <span className="member-title">· {member.title}</span>
+              </Link>
+              <div className="member-actions">
+                {member.isAdmin && !isAdmin && (
+                  <span className="admin-badge">Admin</span>
+                )}
+                {isAdmin && !member.isAdmin && (
+                  <button
+                    className="admin-action-btn"
+                    onClick={() => handlePromoteMember(member.id)}
+                  >
+                    Make Admin
+                  </button>
+                )}
+                {isAdmin && member.isAdmin && member.id !== user?.id && (
+                  <button
+                    className="admin-action-btn"
+                    onClick={() => handleDemoteMember(member.id)}
+                  >
+                    Remove as Admin
+                  </button>
+                )}
+                {isAdmin && member.isAdmin && member.id === user?.id && (
+                  <span className="admin-badge">Admin</span>
+                )}
+                {!member.isAdmin && (isAdmin || member.id === user?.id) && (
+                  <button
+                    className="remove-btn has-tooltip"
+                    onClick={() => handleRemoveMember(member.id)}
+                    data-tooltip="Remove Member"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
           ))}
 
