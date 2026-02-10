@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import { api } from "./api";
+import { initDatabase } from "./db";
 
 interface AuthUser {
   id: number;
@@ -21,16 +22,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      api.users
-        .me()
-        .then((profile) => setUser({ id: profile.id, name: profile.name, email: profile.email }))
-        .catch(() => localStorage.removeItem("token"))
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
+    initDatabase().then(() => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        api.users
+          .me()
+          .then((profile) => setUser({ id: profile.id, name: profile.name, email: profile.email }))
+          .catch(() => localStorage.removeItem("token"))
+          .finally(() => setLoading(false));
+      } else {
+        setLoading(false);
+      }
+    });
   }, []);
 
   const login = (token: string, user: AuthUser) => {

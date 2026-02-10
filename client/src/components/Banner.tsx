@@ -70,7 +70,7 @@ export default function Banner() {
                   Create &amp; Manage Employees
                 </button>
                 <button onClick={() => { setGearOpen(false); handleReset(); }}>
-                  Clear Database &amp; Logout
+                  Reset Demo
                 </button>
                 <button
                   onClick={() => {

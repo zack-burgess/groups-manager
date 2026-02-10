@@ -18,7 +18,7 @@ const TITLES = [
 
 const ORGANIZATIONS = [
   "Human Resources",
-  "Research & Development",
+  "Research and Development",
   "Marketing",
   "Sales",
   "Finance",
@@ -150,7 +150,7 @@ export default function Login() {
           autoFocus
         />
         {employeeStatus === "existing" && (
-          <p className="employee-status status-existing">Existing Employee</p>
+          <p className="employee-status status-existing">welcome back!</p>
         )}
         {needsPassword && (
           <input

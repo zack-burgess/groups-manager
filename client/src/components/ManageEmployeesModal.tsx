@@ -18,7 +18,7 @@ const TITLES = [
 
 const ORGANIZATIONS = [
   "Human Resources",
-  "Research & Development",
+  "Research and Development",
   "Marketing",
   "Sales",
   "Finance",
