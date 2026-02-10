@@ -11,9 +11,8 @@ export default function AboutModal({ onClose }: Props) {
           <button className="modal-close" onClick={onClose}>&times;</button>
         </div>
         <div className="modal-body about-body">
-          <h3>Groups Manager</h3>
           <p>
-            Vibecoded by <strong>Zack Burgess</strong> and <strong>Claude</strong>.
+            This portfolio project vibecoded by <strong>Zack Burgess</strong> and <strong>Claude</strong>.
           </p>
           <p>
             Clone the repo:{" "}
