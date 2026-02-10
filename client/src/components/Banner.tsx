@@ -56,14 +56,6 @@ export default function Banner() {
                 <button
                   onClick={() => {
                     setGearOpen(false);
-                    setShowAbout(true);
-                  }}
-                >
-                  About
-                </button>
-                <button
-                  onClick={() => {
-                    setGearOpen(false);
                     setShowEmployees(true);
                   }}
                 >
@@ -71,6 +63,15 @@ export default function Banner() {
                 </button>
                 <button onClick={() => { setGearOpen(false); handleReset(); }}>
                   Reset Demo
+                </button>
+                <hr className="gear-divider" />
+                <button
+                  onClick={() => {
+                    setGearOpen(false);
+                    setShowAbout(true);
+                  }}
+                >
+                  About
                 </button>
                 <button
                   onClick={() => {
