@@ -54,6 +54,9 @@
 .gear-btn {
   font-size: 1.1rem;
   padding: 0.4rem 0.6rem;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
 }
 
 .gear-dropdown {
@@ -65,8 +68,12 @@
   color: #1a1a2e;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-width: 120px;
+  min-width: 240px;
   z-index: 100;
+}
+
+.gear-dropdown button {
+  white-space: nowrap;
 }
 
 .gear-dropdown button {
@@ -210,6 +217,22 @@ button {
   color: #888;
   font-size: 0.85rem;
   margin-top: -0.5rem;
+}
+
+.employee-status {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: -0.5rem;
+}
+
+.status-existing {
+  color: #4a6cf7;
+}
+
+.auth-subtitle {
+  color: #555;
+  font-size: 0.95rem;
+  text-align: center;
 }
 
 .auth-form button[type="submit"] {
@@ -580,4 +603,197 @@ button {
 h3 {
   margin-bottom: 0.5rem;
   margin-top: 0.5rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-lg {
+  max-width: 560px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.about-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.about-body a {
+  color: #4a6cf7;
+  text-decoration: none;
+}
+
+.about-body a:hover {
+  text-decoration: underline;
+}
+
+/* Employee list */
+.employee-list {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.employee-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.employee-item:last-child {
+  border-bottom: none;
+}
+
+.employee-item:hover {
+  background: #f8f8fc;
+}
+
+.employee-name {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.employee-title {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+.employee-item-expanded {
+  padding: 1rem;
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Suspended employees */
+.suspended-section {
+  margin-top: 1.5rem;
+}
+
+.suspended-header {
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.employee-suspended {
+  cursor: default;
+}
+
+.employee-suspended .employee-name {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+.employee-suspended .employee-title {
+  text-decoration: line-through;
+  color: #ccc;
+}
+
+.employee-date {
+  color: #aaa;
+  font-size: 0.8rem;
+}
+
+/* Employee section header */
+.employee-section-header {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+
+.employee-section-header:first-child {
+  margin-top: 0;
+}
+
+/* Employee create form */
+.employee-create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Greyed out email input */
+.email-input-disabled {
+  background: #f0f0f0;
+  color: #888;
+  cursor: default;
+}
+
+/* Employee action buttons (Update + Suspend same height) */
+.employee-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.employee-actions .btn-primary,
+.employee-actions .btn-danger {
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  margin-top: 0;
+}
+
+/* Disabled button */
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

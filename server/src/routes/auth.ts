@@ -13,11 +13,10 @@ router.get("/check-email", async (req: Request, res: Response) => {
   }
 
   const user = await prisma.user.findUnique({ where: { email } });
-  const isAdmin = email === process.env.ADMIN_EMAIL;
 
   res.json({
     exists: !!user,
-    requiresPassword: isAdmin,
+    requiresPassword: !!user?.passwordHash,
   });
 });
 
@@ -87,15 +86,26 @@ router.post("/signup", async (req: Request, res: Response) => {
     });
   }
 
-  // Auto-join Recruiting and A-team for recruiters/hiring managers
-  if (title === "Recruiter" || title === "Hiring Manager") {
-    const autoJoinGroups = await prisma.group.findMany({
-      where: { name: { in: ["Recruiting", "A-Team"] } },
+  // Auto-join A-Team for all signups (as admin)
+  const aTeam = await prisma.group.findFirst({ where: { name: "A-Team" } });
+  if (aTeam) {
+    await prisma.groupMember.create({
+      data: {
+        groupId: aTeam.id,
+        userId: user.id,
+        addedById: user.id,
+        isAdmin: true,
+      },
     });
-    for (const group of autoJoinGroups) {
+  }
+
+  // Auto-join Recruiting for recruiters/hiring managers
+  if (title === "Recruiter" || title === "Hiring Manager") {
+    const recruiting = await prisma.group.findFirst({ where: { name: "Recruiting" } });
+    if (recruiting) {
       await prisma.groupMember.create({
         data: {
-          groupId: group.id,
+          groupId: recruiting.id,
           userId: user.id,
           addedById: user.id,
         },

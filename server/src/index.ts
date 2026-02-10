@@ -19,7 +19,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/groups", groupRoutes);
-app.use("/api/users", adminRoutes);
+app.use("/api/admin", adminRoutes);
 
 async function start() {
   // Fresh database on every start

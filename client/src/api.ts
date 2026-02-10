@@ -30,6 +30,15 @@ async function request<T>(
   return res.json();
 }
 
+export interface Employee {
+  id: number;
+  name: string;
+  email: string;
+  title: string;
+  organization: string;
+  suspendedAt: string | null;
+}
+
 export const api = {
   auth: {
     checkEmail: (email: string) =>
@@ -56,6 +65,26 @@ export const api = {
       request<{ id: number; name: string; title: string }[]>(
         `/users/search?q=${encodeURIComponent(q)}`
       ),
+  },
+  admin: {
+    getEmployees: () =>
+      request<Employee[]>("/admin/employees"),
+    createEmployee: (data: { name: string; title: string; organization: string }) =>
+      request<Employee>("/admin/employees", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    updateEmployee: (id: number, data: { name?: string; title?: string; organization?: string }) =>
+      request<Employee>(`/admin/employees/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
+    suspendEmployee: (id: number) =>
+      request<{ success: boolean }>(`/admin/employees/${id}/suspend`, {
+        method: "POST",
+      }),
+    resetDatabase: () =>
+      request<{ success: boolean }>("/admin/reset", { method: "POST" }),
   },
   groups: {
     create: (data: { name: string; description: string; openMembership: boolean }) =>
@@ -112,5 +141,5 @@ export interface GroupDetail {
   openMembership: boolean;
   owner: { id: number; name: string };
   createdAt: string;
-  members: { id: number; name: string; title: string }[];
+  members: { id: number; name: string; title: string; isAdmin: boolean }[];
 }

@@ -5,6 +5,19 @@ import { AuthRequest, authMiddleware } from "../middleware/auth";
 const router = Router();
 router.use(authMiddleware);
 
+async function isGroupAdmin(userId: number, groupId: number): Promise<boolean> {
+  const membership = await prisma.groupMember.findFirst({
+    where: {
+      groupId,
+      userId,
+      isAdmin: true,
+      removedAt: null,
+    },
+    include: { user: { select: { suspendedAt: true } } },
+  });
+  return !!membership && !membership.user.suspendedAt;
+}
+
 router.post("/", async (req: AuthRequest, res: Response) => {
   const { name, description, openMembership } = req.body;
   if (!name || !description) {
@@ -22,6 +35,7 @@ router.post("/", async (req: AuthRequest, res: Response) => {
         create: {
           userId: req.userId!,
           addedById: req.userId!,
+          isAdmin: true,
         },
       },
     },
@@ -43,6 +57,7 @@ router.get("/search", async (req: AuthRequest, res: Response) => {
   const groups = await prisma.group.findMany({
     where: {
       name: { contains: q },
+      archivedAt: null,
     },
     include: {
       members: { where: { removedAt: null }, select: { id: true } },
@@ -83,7 +98,10 @@ router.get("/:id", async (req: AuthRequest, res: Response) => {
     openMembership: group.openMembership,
     owner: group.owner,
     createdAt: group.createdAt,
-    members: group.members.map((m) => m.user),
+    members: group.members.map((m) => ({
+      ...m.user,
+      isAdmin: m.isAdmin,
+    })),
   });
 });
 
@@ -95,8 +113,8 @@ router.patch("/:id", async (req: AuthRequest, res: Response) => {
     res.status(404).json({ error: "Group not found" });
     return;
   }
-  if (group.ownerId !== req.userId) {
-    res.status(403).json({ error: "Only the group owner can edit" });
+  if (!(await isGroupAdmin(req.userId!, id))) {
+    res.status(403).json({ error: "Only group admins can edit" });
     return;
   }
 
@@ -121,8 +139,8 @@ router.delete("/:id", async (req: AuthRequest, res: Response) => {
     res.status(404).json({ error: "Group not found" });
     return;
   }
-  if (group.ownerId !== req.userId) {
-    res.status(403).json({ error: "Only the group owner can delete" });
+  if (!(await isGroupAdmin(req.userId!, id))) {
+    res.status(403).json({ error: "Only group admins can delete" });
     return;
   }
 
@@ -140,7 +158,7 @@ router.post("/:id/members", async (req: AuthRequest, res: Response) => {
     return;
   }
 
-  if (group.ownerId !== req.userId && !group.openMembership) {
+  if (!group.openMembership && !(await isGroupAdmin(req.userId!, groupId))) {
     res.status(403).json({ error: "You don't have permission to add members" });
     return;
   }
@@ -179,9 +197,9 @@ router.delete("/:id/members/:userId", async (req: AuthRequest, res: Response) =>
     return;
   }
 
-  const isOwner = group.ownerId === req.userId;
+  const isAdmin = await isGroupAdmin(req.userId!, groupId);
   const isRemovingSelf = userId === req.userId;
-  if (!isOwner && !isRemovingSelf) {
+  if (!isAdmin && !isRemovingSelf) {
     res.status(403).json({ error: "You don't have permission to remove members" });
     return;
   }

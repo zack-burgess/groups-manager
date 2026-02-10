@@ -1,16 +1,12 @@
-import bcrypt from "bcryptjs";
 import prisma from "./prisma";
 
 export async function seed() {
   const adminEmail = process.env.ADMIN_EMAIL;
-  const adminPassword = process.env.ADMIN_PASSWORD;
 
-  if (!adminEmail || !adminPassword) {
-    console.log("No ADMIN_EMAIL/ADMIN_PASSWORD set, skipping seed");
+  if (!adminEmail) {
+    console.log("No ADMIN_EMAIL set, skipping seed");
     return;
   }
-
-  const passwordHash = await bcrypt.hash(adminPassword, 10);
 
   // Create all users
   const zack = await prisma.user.create({
@@ -19,7 +15,6 @@ export async function seed() {
       name: "Zack Burgess",
       title: "Product Manager & Builder",
       organization: "Research & Development",
-      passwordHash,
     },
   });
 
@@ -133,7 +128,11 @@ export async function seed() {
       openMembership: true,
       members: {
         createMany: {
-          data: everyone.map((u) => ({ userId: u.id, addedById: zack.id })),
+          data: everyone.map((u) => ({
+            userId: u.id,
+            addedById: zack.id,
+            isAdmin: u.id === zack.id,
+          })),
         },
       },
     },
@@ -148,7 +147,11 @@ export async function seed() {
       openMembership: true,
       members: {
         createMany: {
-          data: [zack, jane, alex, maria, sam, priya].map((u) => ({ userId: u.id, addedById: zack.id })),
+          data: [zack, jane, alex, maria, sam, priya].map((u) => ({
+            userId: u.id,
+            addedById: zack.id,
+            isAdmin: u.id === zack.id,
+          })),
         },
       },
     },
@@ -163,7 +166,11 @@ export async function seed() {
       openMembership: false,
       members: {
         createMany: {
-          data: [jane, zack, priya].map((u) => ({ userId: u.id, addedById: jane.id })),
+          data: [jane, zack, priya].map((u) => ({
+            userId: u.id,
+            addedById: jane.id,
+            isAdmin: u.id === jane.id,
+          })),
         },
       },
     },
@@ -178,7 +185,11 @@ export async function seed() {
       openMembership: false,
       members: {
         createMany: {
-          data: [maria, alex, zack].map((u) => ({ userId: u.id, addedById: maria.id })),
+          data: [maria, alex, zack].map((u) => ({
+            userId: u.id,
+            addedById: maria.id,
+            isAdmin: u.id === maria.id,
+          })),
         },
       },
     },
@@ -193,7 +204,11 @@ export async function seed() {
       openMembership: false,
       members: {
         createMany: {
-          data: [zack, sam].map((u) => ({ userId: u.id, addedById: zack.id })),
+          data: [zack, sam].map((u) => ({
+            userId: u.id,
+            addedById: zack.id,
+            isAdmin: u.id === zack.id,
+          })),
         },
       },
     },
@@ -208,7 +223,11 @@ export async function seed() {
       openMembership: true,
       members: {
         createMany: {
-          data: [tom, emma].map((u) => ({ userId: u.id, addedById: tom.id })),
+          data: [tom, emma].map((u) => ({
+            userId: u.id,
+            addedById: tom.id,
+            isAdmin: u.id === tom.id,
+          })),
         },
       },
     },
@@ -223,7 +242,11 @@ export async function seed() {
       openMembership: false,
       members: {
         createMany: {
-          data: [lisa, nina].map((u) => ({ userId: u.id, addedById: lisa.id })),
+          data: [lisa, nina].map((u) => ({
+            userId: u.id,
+            addedById: lisa.id,
+            isAdmin: u.id === lisa.id,
+          })),
         },
       },
     },
@@ -240,6 +263,7 @@ export async function seed() {
         create: {
           userId: zack.id,
           addedById: zack.id,
+          isAdmin: true,
         },
       },
     },
