@@ -46,7 +46,7 @@ export default function Profile() {
         </div>
 
         <div className="section-header">
-          <h3>{isOwnProfile ? "My Groups" : "Groups"}</h3>
+          <h3>{isOwnProfile ? "My Groups" : "Groups"} ({profile.groups.length})</h3>
           {isOwnProfile && (
             <button className="btn-primary" onClick={() => navigate("/groups/new")}>
               + New Group
