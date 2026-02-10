@@ -75,6 +75,26 @@ function createTables(database: Database) {
       removed_at TEXT
     )
   `);
+  database.run(`
+    CREATE TABLE IF NOT EXISTS automation_rules (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      group_id INTEGER NOT NULL UNIQUE REFERENCES groups(id) ON DELETE CASCADE,
+      logic TEXT NOT NULL DEFAULT 'AND',
+      add_on_create INTEGER NOT NULL DEFAULT 1,
+      add_on_update INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+  database.run(`
+    CREATE TABLE IF NOT EXISTS automation_filters (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      rule_id INTEGER NOT NULL REFERENCES automation_rules(id) ON DELETE CASCADE,
+      attribute TEXT NOT NULL,
+      operator TEXT NOT NULL,
+      value TEXT NOT NULL,
+      sort_order INTEGER NOT NULL DEFAULT 0
+    )
+  `);
 }
 
 function insertUser(database: Database, name: string, email: string, title: string, org: string): number {
@@ -102,6 +122,30 @@ function insertGroup(
     database.run(
       "INSERT INTO group_members (group_id, user_id, added_by_id, is_admin) VALUES (?, ?, ?, ?)",
       [groupId, m.userId, m.addedById, m.isAdmin ? 1 : 0]
+    );
+  }
+}
+
+function insertRule(
+  database: Database,
+  groupName: string,
+  logic: "AND" | "OR",
+  addOnCreate: boolean,
+  addOnUpdate: boolean,
+  filters: { attribute: string; operator: string; value: string; sortOrder: number }[]
+): void {
+  const group = database.exec("SELECT id FROM groups WHERE name = ?", [groupName]);
+  if (!group.length || !group[0].values.length) return;
+  const groupId = group[0].values[0][0] as number;
+  database.run(
+    "INSERT INTO automation_rules (group_id, logic, add_on_create, add_on_update) VALUES (?, ?, ?, ?)",
+    [groupId, logic, addOnCreate ? 1 : 0, addOnUpdate ? 1 : 0]
+  );
+  const ruleId = database.exec("SELECT last_insert_rowid() as id")[0].values[0][0] as number;
+  for (const f of filters) {
+    database.run(
+      "INSERT INTO automation_filters (rule_id, attribute, operator, value, sort_order) VALUES (?, ?, ?, ?, ?)",
+      [ruleId, f.attribute, f.operator, f.value, f.sortOrder]
     );
   }
 }
@@ -161,6 +205,36 @@ function seed(database: Database) {
   insertGroup(database, "A-Team", "Hiring top, collaborative talent. You know the ones.", zack, false,
     [{ userId: zack, addedById: zack, isAdmin: true }]
   );
+
+  seedRules(database);
+}
+
+function seedRules(database: Database) {
+  insertRule(database, "all-employees", "AND", true, false, [
+    { attribute: "email", operator: "contains", value: "@", sortOrder: 0 },
+  ]);
+  insertRule(database, "R&D", "AND", true, false, [
+    { attribute: "organization", operator: "is", value: "Research and Development", sortOrder: 0 },
+  ]);
+  insertRule(database, "Designers", "AND", true, false, [
+    { attribute: "title", operator: "is_one_of", value: JSON.stringify(["Designer", "UX Researcher"]), sortOrder: 0 },
+  ]);
+  insertRule(database, "Engineers", "AND", true, false, [
+    { attribute: "title", operator: "contains", value: "Engineer", sortOrder: 0 },
+  ]);
+  insertRule(database, "Product Managers", "AND", true, false, [
+    { attribute: "title", operator: "contains", value: "Product Manager", sortOrder: 0 },
+  ]);
+  insertRule(database, "Marketing", "AND", true, false, [
+    { attribute: "title", operator: "is_one_of", value: JSON.stringify(["Marketing Manager", "Account Executive"]), sortOrder: 0 },
+  ]);
+  insertRule(database, "Recruiting", "OR", true, true, [
+    { attribute: "title", operator: "is", value: "Recruiter", sortOrder: 0 },
+    { attribute: "title", operator: "is", value: "Hiring Manager", sortOrder: 1 },
+  ]);
+  insertRule(database, "A-Team", "AND", true, false, [
+    { attribute: "email", operator: "contains", value: "@", sortOrder: 0 },
+  ]);
 }
 
 export async function initDatabase(): Promise<void> {
@@ -174,6 +248,12 @@ export async function initDatabase(): Promise<void> {
   if (saved) {
     db = new SQL.Database(saved);
     db.run("PRAGMA foreign_keys = ON");
+    createTables(db);
+    const ruleCount = db.exec("SELECT COUNT(*) as cnt FROM automation_rules");
+    if (ruleCount.length && ruleCount[0].values[0][0] === 0) {
+      seedRules(db);
+    }
+    await saveDb();
   } else {
     db = new SQL.Database();
     db.run("PRAGMA foreign_keys = ON");
@@ -185,6 +265,8 @@ export async function initDatabase(): Promise<void> {
 
 export async function resetDatabase(): Promise<void> {
   if (!db) return;
+  db.run("DROP TABLE IF EXISTS automation_filters");
+  db.run("DROP TABLE IF EXISTS automation_rules");
   db.run("DROP TABLE IF EXISTS group_members");
   db.run("DROP TABLE IF EXISTS groups");
   db.run("DROP TABLE IF EXISTS users");

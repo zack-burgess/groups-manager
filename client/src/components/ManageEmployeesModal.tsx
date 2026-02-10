@@ -40,6 +40,7 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [creating, setCreating] = useState(false);
+  const [createdName, setCreatedName] = useState("");
   const [error, setError] = useState("");
 
   // Edit form state
@@ -130,6 +131,15 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
     }
   }
 
+  async function handleRehire(emp: Employee) {
+    try {
+      await api.admin.rehireEmployee(emp.id);
+      await loadEmployees();
+    } catch (err: any) {
+      setError(err.message);
+    }
+  }
+
   async function handleCreate() {
     setError("");
     const trimmed = newName.trim();
@@ -147,6 +157,7 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
         title: newTitle,
         organization: newOrg,
       });
+      setCreatedName(trimmed);
       setCreating(false);
       setNewName("");
       setNewTitle(TITLES[0]);
@@ -175,11 +186,11 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
     <div className="modal-overlay">
       <div className="modal modal-lg">
         <div className="modal-header">
-          <h2>{creating ? "Create Employee" : "Manage Employees"}</h2>
-          {!creating && <button className="modal-close" onClick={onClose}>&times;</button>}
+          <h2>{creating ? "Create Employee" : createdName ? "Employee Created" : "Manage Employees"}</h2>
+          {!creating && !createdName && <button className="modal-close" onClick={onClose}>&times;</button>}
         </div>
         <div className="modal-body">
-          {!creating && (
+          {!creating && !createdName && (
             <button
               className="btn-primary"
               style={{ marginBottom: "1rem", width: "100%" }}
@@ -187,6 +198,20 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
             >
               Create Employee
             </button>
+          )}
+
+          {!creating && createdName && (
+            <div className="employee-created-success">
+              <p className="success-message">{createdName} created.</p>
+              <div className="form-actions">
+                <button className="btn-secondary" onClick={() => setCreatedName("")}>
+                  Done
+                </button>
+                <button className="btn-primary" onClick={() => { setCreatedName(""); setCreating(true); setError(""); }}>
+                  Create Another Employee
+                </button>
+              </div>
+            </div>
           )}
 
           {creating && (
@@ -244,7 +269,7 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
             </div>
           )}
 
-          {!creating && (
+          {!creating && !createdName && (
             <>
               <h3 className="employee-section-header">Active Employees ({activeEmployees.length})</h3>
               <div className="employee-list">
@@ -321,6 +346,7 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
                             Suspend
                           </button>
                         </div>
+                        <p className="employee-section-hint">Update used for some automation rules.</p>
                       </div>
                     )}
                   </div>
@@ -330,6 +356,7 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
               {suspendedEmployees.length > 0 && (
                 <div className="suspended-section">
                   <h3 className="employee-section-header">Suspended Employees ({suspendedEmployees.length})</h3>
+                  <p className="employee-section-hint">Rehire treated as a Create for automation rules.</p>
                   <div className="employee-list">
                     {suspendedEmployees.map((emp) => (
                       <div key={emp.id} className="employee-item employee-suspended">
@@ -337,9 +364,9 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
                           <span className="employee-name">{emp.name}</span>
                           <span className="employee-title">{emp.title}</span>
                         </div>
-                        <span className="employee-date">
-                          {new Date(emp.suspendedAt!).toLocaleDateString()}
-                        </span>
+                        <button className="btn-secondary btn-sm" onClick={() => handleRehire(emp)}>
+                          Rehire
+                        </button>
                       </div>
                     ))}
                   </div>

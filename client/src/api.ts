@@ -103,6 +103,22 @@ export interface Group {
   createdAt: string;
 }
 
+export interface AutomationFilter {
+  attribute: string;
+  operator: string;
+  value: string;
+  sortOrder: number;
+}
+
+export interface AutomationRule {
+  id: number;
+  groupId: number;
+  logic: "AND" | "OR";
+  addOnCreate: boolean;
+  addOnUpdate: boolean;
+  filters: AutomationFilter[];
+}
+
 export interface GroupDetail {
   id: number;
   name: string;
@@ -111,6 +127,113 @@ export interface GroupDetail {
   owner: { id: number; name: string };
   createdAt: string;
   members: { id: number; name: string; title: string; isAdmin: boolean }[];
+  automationRule: AutomationRule | null;
+}
+
+function getAutomationRule(groupId: number): AutomationRule | null {
+  const rule = queryOne<{ id: number; group_id: number; logic: string; add_on_create: number; add_on_update: number }>(
+    "SELECT id, group_id, logic, add_on_create, add_on_update FROM automation_rules WHERE group_id = ?",
+    [groupId]
+  );
+  if (!rule) return null;
+
+  const filters = queryAll<{ attribute: string; operator: string; value: string; sort_order: number }>(
+    "SELECT attribute, operator, value, sort_order FROM automation_filters WHERE rule_id = ? ORDER BY sort_order",
+    [rule.id]
+  );
+
+  return {
+    id: rule.id,
+    groupId: rule.group_id,
+    logic: rule.logic as "AND" | "OR",
+    addOnCreate: !!rule.add_on_create,
+    addOnUpdate: !!rule.add_on_update,
+    filters: filters.map((f) => ({
+      attribute: f.attribute,
+      operator: f.operator,
+      value: f.value,
+      sortOrder: f.sort_order,
+    })),
+  };
+}
+
+function evaluateFilter(user: { email: string; title: string; organization: string }, filter: AutomationFilter): boolean {
+  const attrMap: Record<string, string> = {
+    email: user.email,
+    title: user.title,
+    organization: user.organization,
+  };
+  const userVal = (attrMap[filter.attribute] || "").toLowerCase();
+  const filterVal = filter.value.toLowerCase();
+
+  switch (filter.operator) {
+    case "is":
+      return userVal === filterVal;
+    case "is_not":
+      return userVal !== filterVal;
+    case "contains":
+      return userVal.includes(filterVal);
+    case "does_not_contain":
+      return !userVal.includes(filterVal);
+    case "is_one_of": {
+      const values: string[] = JSON.parse(filter.value);
+      return values.some((v) => v.toLowerCase() === userVal);
+    }
+    case "is_not_one_of": {
+      const values: string[] = JSON.parse(filter.value);
+      return !values.some((v) => v.toLowerCase() === userVal);
+    }
+    default:
+      return false;
+  }
+}
+
+function evaluateRules(userId: number, trigger: "create" | "update"): void {
+  const user = queryOne<{ id: number; email: string; title: string; organization: string }>(
+    "SELECT id, email, title, organization FROM users WHERE id = ?",
+    [userId]
+  );
+  if (!user) return;
+
+  const triggerCol = trigger === "create" ? "add_on_create" : "add_on_update";
+  const rules = queryAll<{ id: number; group_id: number; logic: string; add_on_create: number; add_on_update: number }>(
+    `SELECT id, group_id, logic, add_on_create, add_on_update FROM automation_rules WHERE ${triggerCol} = 1`
+  );
+
+  for (const rule of rules) {
+    const filters = queryAll<{ attribute: string; operator: string; value: string; sort_order: number }>(
+      "SELECT attribute, operator, value, sort_order FROM automation_filters WHERE rule_id = ? ORDER BY sort_order",
+      [rule.id]
+    );
+    if (filters.length === 0) continue;
+
+    const filterObjs = filters.map((f) => ({
+      attribute: f.attribute,
+      operator: f.operator,
+      value: f.value,
+      sortOrder: f.sort_order,
+    }));
+
+    const match = rule.logic === "AND"
+      ? filterObjs.every((f) => evaluateFilter(user, f))
+      : filterObjs.some((f) => evaluateFilter(user, f));
+
+    if (!match) continue;
+
+    // Check if already an active member
+    const existing = queryOne<{ id: number }>(
+      "SELECT id FROM group_members WHERE group_id = ? AND user_id = ? AND removed_at IS NULL",
+      [rule.group_id, userId]
+    );
+    if (existing) continue;
+
+    // Check group name for A-Team admin logic
+    const group = queryOne<{ name: string }>("SELECT name FROM groups WHERE id = ?", [rule.group_id]);
+    const isAdmin = group?.name === "A-Team" ? 1 : 0;
+
+    run("INSERT INTO group_members (group_id, user_id, added_by_id, is_admin) VALUES (?, ?, ?, ?)",
+      [rule.group_id, userId, userId, isAdmin]);
+  }
 }
 
 export const api = {
@@ -147,28 +270,7 @@ export const api = {
         [data.name, data.email, data.title, data.organization]);
       const userId = lastId();
 
-      // Auto-join all-employees
-      const allEmp = queryOne<{ id: number }>("SELECT id FROM groups WHERE name = 'all-employees' AND archived_at IS NULL");
-      if (allEmp) {
-        run("INSERT INTO group_members (group_id, user_id, added_by_id) VALUES (?, ?, ?)",
-          [allEmp.id, userId, userId]);
-      }
-
-      // Auto-join A-Team (as admin)
-      const aTeam = queryOne<{ id: number }>("SELECT id FROM groups WHERE name = 'A-Team' AND archived_at IS NULL");
-      if (aTeam) {
-        run("INSERT INTO group_members (group_id, user_id, added_by_id, is_admin) VALUES (?, ?, ?, 1)",
-          [aTeam.id, userId, userId]);
-      }
-
-      // Auto-join Recruiting for recruiters/hiring managers
-      if (data.title === "Recruiter" || data.title === "Hiring Manager") {
-        const recruiting = queryOne<{ id: number }>("SELECT id FROM groups WHERE name = 'Recruiting' AND archived_at IS NULL");
-        if (recruiting) {
-          run("INSERT INTO group_members (group_id, user_id, added_by_id) VALUES (?, ?, ?)",
-            [recruiting.id, userId, userId]);
-        }
-      }
+      evaluateRules(userId, "create");
 
       await saveDb();
       return {
@@ -223,15 +325,7 @@ export const api = {
         [trimmedName, email, data.title, data.organization]);
       const userId = lastId();
 
-      // Auto-join all-employees and A-Team
-      const autoGroups = queryAll<{ id: number; name: string }>(
-        "SELECT id, name FROM groups WHERE name IN ('all-employees', 'A-Team') AND archived_at IS NULL"
-      );
-      const currentUserId = getCurrentUserId();
-      for (const g of autoGroups) {
-        run("INSERT INTO group_members (group_id, user_id, added_by_id, is_admin) VALUES (?, ?, ?, ?)",
-          [g.id, userId, currentUserId, g.name === "A-Team" ? 1 : 0]);
-      }
+      evaluateRules(userId, "create");
 
       await saveDb();
       return { id: userId, name: trimmedName, email, title: data.title, organization: data.organization, suspendedAt: null };
@@ -255,6 +349,8 @@ export const api = {
       if (data.organization !== undefined) {
         run("UPDATE users SET organization = ? WHERE id = ?", [data.organization, id]);
       }
+
+      evaluateRules(id, "update");
 
       await saveDb();
       const updated = queryOne<{
@@ -327,6 +423,21 @@ export const api = {
       return { success: true };
     },
 
+    rehireEmployee: async (id: number): Promise<{ success: boolean }> => {
+      const target = queryOne<{ id: number; suspended_at: string | null }>(
+        "SELECT id, suspended_at FROM users WHERE id = ?", [id]
+      );
+      if (!target) throw new Error("User not found");
+      if (!target.suspended_at) throw new Error("Employee is not suspended");
+
+      run("UPDATE users SET suspended_at = NULL WHERE id = ?", [id]);
+
+      evaluateRules(id, "create");
+
+      await saveDb();
+      return { success: true };
+    },
+
     resetDatabase: async (): Promise<{ success: boolean }> => {
       await resetDatabase();
       return { success: true };
@@ -366,7 +477,8 @@ export const api = {
       const members = queryAll<{ id: number; name: string; title: string; is_admin: number }>(
         `SELECT u.id, u.name, u.title, gm.is_admin
          FROM group_members gm JOIN users u ON u.id = gm.user_id
-         WHERE gm.group_id = ? AND gm.removed_at IS NULL`,
+         WHERE gm.group_id = ? AND gm.removed_at IS NULL
+         ORDER BY gm.is_admin DESC, gm.added_at DESC`,
         [id]
       );
 
@@ -383,6 +495,7 @@ export const api = {
           title: m.title,
           isAdmin: !!m.is_admin,
         })),
+        automationRule: getAutomationRule(id),
       };
     },
 
@@ -404,6 +517,11 @@ export const api = {
     delete: async (id: number): Promise<{ success: boolean }> => {
       const userId = getCurrentUserId();
       if (!isGroupAdmin(userId, id)) throw new Error("Only group admins can delete");
+      const rule = queryOne<{ id: number }>("SELECT id FROM automation_rules WHERE group_id = ?", [id]);
+      if (rule) {
+        run("DELETE FROM automation_filters WHERE rule_id = ?", [rule.id]);
+        run("DELETE FROM automation_rules WHERE id = ?", [rule.id]);
+      }
       run("DELETE FROM group_members WHERE group_id = ?", [id]);
       run("DELETE FROM groups WHERE id = ?", [id]);
       await saveDb();
@@ -503,6 +621,58 @@ export const api = {
       run("UPDATE group_members SET is_admin = 0 WHERE id = ?", [membership.id]);
       await saveDb();
       return { success: true };
+    },
+
+    getRule: async (groupId: number): Promise<AutomationRule | null> => {
+      return getAutomationRule(groupId);
+    },
+
+    saveRule: async (groupId: number, ruleData: { logic: "AND" | "OR"; addOnCreate: boolean; addOnUpdate: boolean; filters: AutomationFilter[] }): Promise<AutomationRule> => {
+      const currentUserId = getCurrentUserId();
+      if (!isGroupAdmin(currentUserId, groupId)) throw new Error("Only group admins can manage automation rules");
+
+      // Delete existing rule if any
+      const existing = queryOne<{ id: number }>("SELECT id FROM automation_rules WHERE group_id = ?", [groupId]);
+      if (existing) {
+        run("DELETE FROM automation_filters WHERE rule_id = ?", [existing.id]);
+        run("DELETE FROM automation_rules WHERE id = ?", [existing.id]);
+      }
+
+      run("INSERT INTO automation_rules (group_id, logic, add_on_create, add_on_update) VALUES (?, ?, ?, ?)",
+        [groupId, ruleData.logic, ruleData.addOnCreate ? 1 : 0, ruleData.addOnUpdate ? 1 : 0]);
+      const ruleId = lastId();
+
+      for (const f of ruleData.filters) {
+        run("INSERT INTO automation_filters (rule_id, attribute, operator, value, sort_order) VALUES (?, ?, ?, ?, ?)",
+          [ruleId, f.attribute, f.operator, f.value, f.sortOrder]);
+      }
+
+      await saveDb();
+      return getAutomationRule(groupId)!;
+    },
+
+    deleteRule: async (groupId: number): Promise<{ success: boolean }> => {
+      const currentUserId = getCurrentUserId();
+      if (!isGroupAdmin(currentUserId, groupId)) throw new Error("Only group admins can manage automation rules");
+
+      const existing = queryOne<{ id: number }>("SELECT id FROM automation_rules WHERE group_id = ?", [groupId]);
+      if (existing) {
+        run("DELETE FROM automation_filters WHERE rule_id = ?", [existing.id]);
+        run("DELETE FROM automation_rules WHERE id = ?", [existing.id]);
+      }
+
+      await saveDb();
+      return { success: true };
+    },
+
+    getDistinctValues: async (attribute: string): Promise<string[]> => {
+      const colMap: Record<string, string> = { email: "email", title: "title", organization: "organization" };
+      const col = colMap[attribute];
+      if (!col) return [];
+      const rows = queryAll<{ val: string }>(
+        `SELECT DISTINCT ${col} as val FROM users WHERE suspended_at IS NULL ORDER BY val`
+      );
+      return rows.map((r) => r.val);
     },
   },
 };
