@@ -61,8 +61,16 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
     setEmployees(data);
   }
 
-  const activeEmployees = employees.filter((e) => !e.suspendedAt);
-  const suspendedEmployees = employees.filter((e) => e.suspendedAt);
+  const activeEmployees = employees
+    .filter((e) => !e.suspendedAt)
+    .sort((a, b) => {
+      if (a.email === adminEmail) return -1;
+      if (b.email === adminEmail) return 1;
+      return b.id - a.id; // newest first
+    });
+  const suspendedEmployees = employees
+    .filter((e) => e.suspendedAt)
+    .sort((a, b) => new Date(b.suspendedAt!).getTime() - new Date(a.suspendedAt!).getTime());
 
   function expandEmployee(emp: Employee) {
     if (expandedId === emp.id) {
@@ -167,8 +175,8 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
     <div className="modal-overlay">
       <div className="modal modal-lg">
         <div className="modal-header">
-          <h2>Manage Employees</h2>
-          <button className="modal-close" onClick={onClose}>&times;</button>
+          <h2>{creating ? "Create Employee" : "Manage Employees"}</h2>
+          {!creating && <button className="modal-close" onClick={onClose}>&times;</button>}
         </div>
         <div className="modal-body">
           {!creating && (
@@ -183,14 +191,13 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
 
           {creating && (
             <div className="employee-create-form">
-              <h3>New Employee</h3>
               <div className="form-field">
                 <label>Name</label>
                 <input
                   type="text"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  placeholder="Full name"
+                  placeholder="First Last"
                 />
               </div>
               <div className="form-field">
@@ -198,6 +205,7 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
                 <input
                   type="text"
                   className="email-input-disabled"
+                  placeholder="first.last@company.com"
                   value={newName.trim() ? nameToEmail(newName) : ""}
                   readOnly
                   tabIndex={-1}
@@ -223,7 +231,7 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
               {error && <p className="error">{error}</p>}
               <div className="form-actions" style={{ marginTop: "0.75rem" }}>
                 <button className="btn-secondary" onClick={() => { setCreating(false); setError(""); }}>
-                  Cancel
+                  Back
                 </button>
                 <button
                   className="btn-primary"
@@ -238,7 +246,7 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
 
           {!creating && (
             <>
-              <h3 className="employee-section-header">Active Employees</h3>
+              <h3 className="employee-section-header">Active Employees ({activeEmployees.length})</h3>
               <div className="employee-list">
                 {activeEmployees.map((emp) => (
                   <div key={emp.id}>
@@ -274,6 +282,7 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
                           <input
                             type="text"
                             className="email-input-disabled"
+                  placeholder="first.last@company.com"
                             value={editName.trim() ? nameToEmail(editName) : ""}
                             readOnly
                             tabIndex={-1}
@@ -320,7 +329,7 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
 
               {suspendedEmployees.length > 0 && (
                 <div className="suspended-section">
-                  <h3 className="employee-section-header">Suspended Employees</h3>
+                  <h3 className="employee-section-header">Suspended Employees ({suspendedEmployees.length})</h3>
                   <div className="employee-list">
                     {suspendedEmployees.map((emp) => (
                       <div key={emp.id} className="employee-item employee-suspended">

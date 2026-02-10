@@ -15,7 +15,7 @@ function nameToEmail(name: string): string {
 // List all employees
 router.get("/employees", async (_req: AuthRequest, res: Response) => {
   const employees = await prisma.user.findMany({
-    orderBy: [{ suspendedAt: "asc" }, { name: "asc" }],
+    orderBy: { id: "desc" },
     select: {
       id: true,
       name: true,
