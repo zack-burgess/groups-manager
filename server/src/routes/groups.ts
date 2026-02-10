@@ -57,7 +57,7 @@ router.get("/search", async (req: AuthRequest, res: Response) => {
 });
 
 router.get("/:id", async (req: AuthRequest, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string);
   const group = await prisma.group.findUnique({
     where: { id },
     include: {
@@ -65,7 +65,7 @@ router.get("/:id", async (req: AuthRequest, res: Response) => {
       members: {
         where: { removedAt: null },
         include: {
-          user: { select: { id: true, name: true } },
+          user: { select: { id: true, name: true, title: true } },
         },
       },
     },
@@ -88,7 +88,7 @@ router.get("/:id", async (req: AuthRequest, res: Response) => {
 });
 
 router.patch("/:id", async (req: AuthRequest, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string);
   const group = await prisma.group.findUnique({ where: { id } });
 
   if (!group) {
@@ -114,7 +114,7 @@ router.patch("/:id", async (req: AuthRequest, res: Response) => {
 });
 
 router.delete("/:id", async (req: AuthRequest, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string);
   const group = await prisma.group.findUnique({ where: { id } });
 
   if (!group) {
@@ -131,7 +131,7 @@ router.delete("/:id", async (req: AuthRequest, res: Response) => {
 });
 
 router.post("/:id/members", async (req: AuthRequest, res: Response) => {
-  const groupId = parseInt(req.params.id);
+  const groupId = parseInt(req.params.id as string);
   const { userId } = req.body;
 
   const group = await prisma.group.findUnique({ where: { id: groupId } });
@@ -170,8 +170,8 @@ router.post("/:id/members", async (req: AuthRequest, res: Response) => {
 });
 
 router.delete("/:id/members/:userId", async (req: AuthRequest, res: Response) => {
-  const groupId = parseInt(req.params.id);
-  const userId = parseInt(req.params.userId);
+  const groupId = parseInt(req.params.id as string);
+  const userId = parseInt(req.params.userId as string);
 
   const group = await prisma.group.findUnique({ where: { id: groupId } });
   if (!group) {

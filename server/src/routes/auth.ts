@@ -75,16 +75,32 @@ router.post("/signup", async (req: Request, res: Response) => {
     data: { email, name, title, organization },
   });
 
-  // Auto-join the R&D group if it exists
-  const rndGroup = await prisma.group.findFirst({ where: { name: "R&D" } });
-  if (rndGroup) {
+  // Auto-join the all-employees group if it exists
+  const allEmployees = await prisma.group.findFirst({ where: { name: "all-employees" } });
+  if (allEmployees) {
     await prisma.groupMember.create({
       data: {
-        groupId: rndGroup.id,
+        groupId: allEmployees.id,
         userId: user.id,
         addedById: user.id,
       },
     });
+  }
+
+  // Auto-join Recruiting and A-team for recruiters/hiring managers
+  if (title === "Recruiter" || title === "Hiring Manager") {
+    const autoJoinGroups = await prisma.group.findMany({
+      where: { name: { in: ["Recruiting", "A-Team"] } },
+    });
+    for (const group of autoJoinGroups) {
+      await prisma.groupMember.create({
+        data: {
+          groupId: group.id,
+          userId: user.id,
+          addedById: user.id,
+        },
+      });
+    }
   }
 
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {

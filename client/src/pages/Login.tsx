@@ -3,8 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../api";
 import { useAuth } from "../auth";
 
+function nameToEmail(name: string): string {
+  const slug = name.trim().toLowerCase().replace(/\s+/g, ".");
+  const domain = slug === "zack.burgess" ? "hey.com" : "company.com";
+
+  return `${slug}@${domain}`;
+}
+
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [needsPassword, setNeedsPassword] = useState(false);
   const [error, setError] = useState("");
@@ -15,11 +22,15 @@ export default function Login() {
     e.preventDefault();
     setError("");
 
+    if (!name.trim()) return;
+
+    const email = nameToEmail(name);
+
     try {
       const check = await api.auth.checkEmail(email);
 
-      if (!check.exists && !check.requiresPassword) {
-        navigate("/signup", { state: { email } });
+      if (!check.exists) {
+        navigate("/signup", { state: { name: name.trim(), email } });
         return;
       }
 
@@ -32,7 +43,7 @@ export default function Login() {
       login(result.token, result.user);
       navigate("/profile");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(err instanceof Error ? err.message : "Something went wrong");
     }
   };
 
@@ -41,14 +52,16 @@ export default function Login() {
       <form className="auth-form" onSubmit={handleSubmit}>
         <h1>Groups Manager</h1>
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
+          type="text"
+          placeholder="Enter your name"
+          value={name}
           onChange={(e) => {
-            setEmail(e.target.value);
+            setName(e.target.value);
             setNeedsPassword(false);
+            setError("");
           }}
           required
+          autoFocus
         />
         {needsPassword && (
           <input

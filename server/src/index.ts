@@ -1,6 +1,9 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import { execSync } from "child_process";
+import { unlinkSync, existsSync } from "fs";
+import { join } from "path";
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/users";
 import groupRoutes from "./routes/groups";
@@ -19,6 +22,16 @@ app.use("/api/groups", groupRoutes);
 app.use("/api/users", adminRoutes);
 
 async function start() {
+  // Fresh database on every start
+  const dbPath = join(__dirname, "../prisma/dev.db");
+  if (existsSync(dbPath)) {
+    unlinkSync(dbPath);
+  }
+  execSync("npx prisma migrate deploy", {
+    cwd: join(__dirname, ".."),
+    stdio: "inherit",
+  });
+
   await seed();
   app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

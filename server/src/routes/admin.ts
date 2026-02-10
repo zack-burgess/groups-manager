@@ -15,7 +15,7 @@ router.post("/:id/suspend", async (req: AuthRequest, res: Response) => {
     return;
   }
 
-  const targetId = parseInt(req.params.id);
+  const targetId = parseInt(req.params.id as string);
   if (targetId === req.userId) {
     res.status(400).json({ error: "Cannot suspend yourself" });
     return;

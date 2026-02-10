@@ -65,7 +65,7 @@ router.get("/search", async (req: AuthRequest, res: Response) => {
 });
 
 router.get("/:id", async (req: AuthRequest, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string);
   const user = await prisma.user.findUnique({
     where: { id },
     include: {

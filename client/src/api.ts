@@ -112,5 +112,5 @@ export interface GroupDetail {
   openMembership: boolean;
   owner: { id: number; name: string };
   createdAt: string;
-  members: { id: number; name: string }[];
+  members: { id: number; name: string; title: string }[];
 }

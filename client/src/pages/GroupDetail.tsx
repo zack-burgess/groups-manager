@@ -82,7 +82,7 @@ export default function GroupDetail() {
         <div className="list">
           {group.members.map((member) => (
             <div key={member.id} className="list-item member-item">
-              <Link to={`/profile/${member.id}`} className="member-link"><PersonIcon size={16} /> {member.name}</Link>
+              <Link to={`/profile/${member.id}`} className="member-link"><PersonIcon size={16} /> {member.name} <span className="member-title">· {member.title}</span></Link>
               {(isOwner || member.id === user?.id) && (
                 <button
                   className="remove-btn"

@@ -124,6 +124,7 @@
 }
 
 /* Inputs */
+select,
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -137,7 +138,16 @@ textarea {
   transition: border-color 0.2s;
 }
 
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23555' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  padding-right: 2.5rem;
+}
+
 input:focus,
+select:focus,
 textarea:focus {
   outline: none;
   border-color: #4a6cf7;
@@ -194,6 +204,12 @@ button {
 .btn-danger:hover {
   background: #e74c3c;
   color: #fff;
+}
+
+.email-preview {
+  color: #888;
+  font-size: 0.85rem;
+  margin-top: -0.5rem;
 }
 
 .auth-form button[type="submit"] {
@@ -312,6 +328,12 @@ button {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.member-title {
+  color: #888;
+  font-weight: 400;
+  font-size: 0.85rem;
 }
 
 .remove-btn {
