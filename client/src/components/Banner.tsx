@@ -11,6 +11,7 @@ export default function Banner() {
   const [gearOpen, setGearOpen] = useState(false);
   const [showEmployees, setShowEmployees] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const gearRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -61,7 +62,7 @@ export default function Banner() {
                 >
                   Create &amp; Manage Employees
                 </button>
-                <button onClick={() => { setGearOpen(false); handleReset(); }}>
+                <button onClick={() => { setGearOpen(false); setShowResetConfirm(true); }}>
                   Reset Demo
                 </button>
                 <hr className="gear-divider" />
@@ -94,6 +95,23 @@ export default function Banner() {
         />
       )}
       {showAbout && <AboutModal onClose={() => setShowAbout(false)} />}
+      {showResetConfirm && (
+        <div className="modal-overlay">
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Reset Demo</h2>
+              <button className="modal-close" onClick={() => setShowResetConfirm(false)}>×</button>
+            </div>
+            <div className="modal-body">
+              <p>All employee and group changes will be reverted. Continue?</p>
+              <div className="confirm-actions">
+                <button className="btn-secondary" onClick={() => setShowResetConfirm(false)}>Cancel</button>
+                <button className="btn-danger" onClick={() => { setShowResetConfirm(false); handleReset(); }}>Reset</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

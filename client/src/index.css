@@ -208,10 +208,9 @@ button {
   background: none;
   color: #e74c3c;
   border: 1px solid #e74c3c;
-  padding: 0.6rem 1rem;
+  padding: 0.7rem 1.2rem;
   border-radius: 8px;
-  font-size: 0.85rem;
-  margin-top: 2rem;
+  font-size: 0.95rem;
 }
 
 .btn-danger:hover {
@@ -571,6 +570,10 @@ button {
   justify-content: flex-end;
 }
 
+.group-form > .btn-danger {
+  margin-top: 1rem;
+}
+
 /* Search */
 .search-form {
   display: flex;
@@ -728,6 +731,14 @@ h3 {
 .modal-body {
   padding: 1.5rem;
   overflow-y: auto;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: stretch;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
 }
 
 .about-body {
