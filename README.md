@@ -52,7 +52,7 @@ The app runs entirely in the browser using <a href="https://github.com/sql-js/sq
 
 ## Design
 
-This project was shaped across two sessions with <a href="https://basecamp.com/shapeup/1.3-chapter-04" target="_blank">breadboarding and UI sketches</a> from Shape Up.
+This project was shaped across two sessions with <a href="https://basecamp.com/shapeup/1.3-chapter-04" target="_blank">breadboarding and UI sketches</a> from Shape Up. Read the full <a href="https://zackburgess.co/case-study" target="_blank">case study</a> for more on the discovery and delivery process.
 
 1. **Groups Manager** — [DESIGN.md](./DESIGN.md) — flows, places, affordances, and UI sketches
 2. **Automated Membership** — <a href="./docs/automated_membership_product_pitch.pdf" target="_blank">Product Pitch (PDF)</a> — problem, outcome, shape, breadboard, UI sketches, and systems diagram
