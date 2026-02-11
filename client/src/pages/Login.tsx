@@ -136,7 +136,7 @@ export default function Login() {
   return (
     <div className="auth-page">
       <form className="auth-form" onSubmit={handleLogin}>
-        <h1>Groups Manager</h1>
+        <h1>Groups Manager<br /><span className="auth-subtitle-heading">with Automated Membership</span></h1>
         <input
           type="text"
           placeholder="Please enter your name..."

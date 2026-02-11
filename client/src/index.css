@@ -53,10 +53,12 @@
 
 .gear-btn {
   font-size: 1.1rem;
-  padding: 0.4rem 0.6rem;
-  line-height: 1.2;
-  display: flex;
+  padding: 0.35rem 0.55rem;
+  line-height: 1;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .gear-dropdown {
@@ -121,6 +123,13 @@
   font-size: 1.5rem;
   text-align: center;
   margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.auth-subtitle-heading {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #888;
 }
 
 /* Form fields */
@@ -306,6 +315,12 @@ button {
   font-size: 1.1rem;
 }
 
+.membership-hint {
+  color: #888;
+  font-size: 0.8rem;
+  margin: 0.25rem 0 0.75rem;
+}
+
 /* Lists */
 .list {
   background: #fff;
@@ -390,6 +405,19 @@ button {
   color: #e74c3c;
 }
 
+.promote-btn {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 1.1rem;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+}
+
+.promote-btn:hover {
+  color: #4a6cf7;
+}
+
 /* Fast tooltip */
 .has-tooltip {
   position: relative;
@@ -440,6 +468,17 @@ button {
 .admin-badge {
   color: #888;
   background: #f5f5f5;
+  border: 1px solid transparent;
+}
+
+.member-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  color: #aaa;
+  background: none;
   border: 1px solid transparent;
 }
 
@@ -513,9 +552,7 @@ button {
 .group-description {
   color: #555;
   margin: 0.5rem 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  white-space: pre-line;
 }
 
 .group-header p a {
@@ -525,6 +562,11 @@ button {
 
 .group-header p a:hover {
   text-decoration: underline;
+}
+
+.pencil-icon {
+  display: inline-block;
+  transform: rotate(135deg);
 }
 
 .icon-btn {
@@ -761,6 +803,26 @@ h3 {
   text-decoration: underline;
 }
 
+.about-divider {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 0.25rem 0;
+}
+
+.about-body h3 {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.about-tutorial {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
 /* Employee list */
 .employee-list {
   border: 1px solid #eee;
@@ -907,16 +969,33 @@ h3 {
 
 /* Automation inline (in group header) */
 .automation-inline {
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
   font-size: 0.85rem;
   color: #555;
   line-height: 1.6;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
 }
 
 .automation-inline-header {
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
+}
+
+.automation-edit-btn {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 0.85rem;
+  padding: 0.1rem 0.3rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.automation-edit-btn:hover {
+  color: #4a6cf7;
 }
 
 .automation-inline-btn {
@@ -933,7 +1012,8 @@ h3 {
 }
 
 .automation-inline-indent {
-  padding-left: 1rem;
+  padding-left: 3.2rem;
+  text-indent: -2.2rem;
 }
 
 .automation-inline-spacer {
@@ -1021,11 +1101,14 @@ h3 {
 
 .automation-filter-row select {
   width: auto;
-  flex: 0 1 auto;
+  flex: 0 0 auto;
+}
+
+.automation-filter-row .autocomplete-wrapper {
+  flex: 1;
   min-width: 0;
 }
 
-.automation-filter-row .autocomplete-wrapper,
 .automation-filter-row .multi-value-wrapper {
   flex: 1;
   min-width: 0;
@@ -1174,10 +1257,11 @@ h3 {
   gap: 0.2rem;
   background: #eef1fe;
   color: #333;
+  white-space: normal;
+  word-break: break-word;
   padding: 0.15rem 0.4rem;
   border-radius: 4px;
   font-size: 0.8rem;
-  white-space: nowrap;
 }
 
 .chip-remove {
@@ -1197,6 +1281,13 @@ h3 {
 .chip-input-wrapper {
   flex: 1;
   min-width: 80px;
+  position: static;
+}
+
+.chip-input-wrapper .autocomplete-dropdown {
+  left: 0;
+  right: 0;
+  width: 100%;
 }
 
 .chip-input-wrapper input {

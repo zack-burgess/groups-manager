@@ -26,6 +26,14 @@ export default function AboutModal({ onClose }: Props) {
               zackburgess.co/case-study
             </a>
           </p>
+          <hr className="about-divider" />
+          <h3>Try Automated Membership</h3>
+          <ol className="about-tutorial">
+            <li>To configure Automated Membership, you must be an <strong>Admin</strong> for the group. You are automatically an Admin of the &#x2B50; A-Team, or you can create your own group.</li>
+            <li>Open the group and <strong>Create Rule</strong> for Automated Membership.</li>
+            <li>Create a <strong>New Employee</strong> from the &#x2699;&#xFE0E; gear icon in the top right.</li>
+            <li>View the <strong>Group's Members</strong> to see they were added, based upon your Rule Filter.</li>
+          </ol>
         </div>
       </div>
     </div>

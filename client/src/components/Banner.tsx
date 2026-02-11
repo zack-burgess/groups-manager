@@ -50,7 +50,7 @@ export default function Banner() {
               className="banner-btn gear-btn"
               onClick={() => setGearOpen(!gearOpen)}
             >
-              ⚙
+              ⚙&#xFE0E;
             </button>
             {gearOpen && (
               <div className="gear-dropdown">

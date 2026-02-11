@@ -285,10 +285,11 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
                       </div>
                       {emp.email !== adminEmail && (
                         <button
-                          className="icon-btn"
+                          className="icon-btn has-tooltip"
                           onClick={(e) => { e.stopPropagation(); expandEmployee(emp); }}
+                          data-tooltip="Edit Employee"
                         >
-                          ✏
+                          <span className="pencil-icon">✏</span>
                         </button>
                       )}
                     </div>

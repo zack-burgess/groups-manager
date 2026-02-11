@@ -79,7 +79,7 @@ export default function GroupForm() {
             required
           />
           <div className="membership-toggle">
-            <label>Who can manage members?</label>
+            <label>Who can add members?</label>
             <div className="toggle-options">
               <button
                 type="button"

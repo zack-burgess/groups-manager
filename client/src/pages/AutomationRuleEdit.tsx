@@ -5,9 +5,9 @@ import type { AutomationRule } from "../api";
 import Banner from "../components/Banner";
 
 const ATTRIBUTES = [
-  { value: "email", label: "Email" },
-  { value: "title", label: "Title" },
   { value: "organization", label: "Organization" },
+  { value: "title", label: "Title" },
+  { value: "email", label: "Email" },
 ];
 
 const OPERATORS = [
@@ -184,7 +184,7 @@ export default function AutomationRuleEdit() {
   const [existingRule, setExistingRule] = useState<AutomationRule | null>(null);
   const [loading, setLoading] = useState(true);
   const [groupName, setGroupName] = useState("");
-  const [filters, setFilters] = useState<FilterRow[]>([{ attribute: "email", operator: "is", value: "" }]);
+  const [filters, setFilters] = useState<FilterRow[]>([{ attribute: "organization", operator: "is", value: "" }]);
   const [logic, setLogic] = useState<"AND" | "OR">("AND");
   const [addOnUpdate, setAddOnUpdate] = useState(false);
   const [error, setError] = useState("");
@@ -225,7 +225,7 @@ export default function AutomationRuleEdit() {
   }
 
   function addFilter() {
-    setFilters((prev) => [...prev, { attribute: "email", operator: "is", value: "" }]);
+    setFilters((prev) => [...prev, { attribute: "organization", operator: "is", value: "" }]);
   }
 
   function removeFilter(index: number) {

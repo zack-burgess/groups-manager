@@ -107,22 +107,23 @@ export default function GroupDetail() {
             )}
           </div>
           <p className="group-description">{group.description}</p>
-          <p>
-            {group.members.filter((m) => m.isAdmin).length === 1 ? "Admin" : "Admins"}:{" "}
-            {group.members.filter((m) => m.isAdmin).map((m, i, arr) => (
-              <span key={m.id}>
-                <Link to={`/profile/${m.id}`}>{m.name}</Link>
-                {i < arr.length - 1 ? ", " : ""}
-              </span>
-            ))}
-          </p>
           <div className="automation-inline">
             <div className="automation-inline-header">
               <span className="automation-inline-label">Automated Membership</span>
               {isAdmin && (
-                <button className="automation-inline-btn" onClick={() => navigate(`/groups/${id}/automation`)}>
-                  {group.automationRule ? "Edit Rule" : "Create Rule"}
-                </button>
+                group.automationRule ? (
+                  <button
+                    className="automation-edit-btn has-tooltip"
+                    onClick={() => navigate(`/groups/${id}/automation`)}
+                    data-tooltip="Edit Rule"
+                  >
+                    <span className="pencil-icon">✏</span>
+                  </button>
+                ) : (
+                  <button className="automation-inline-btn" onClick={() => navigate(`/groups/${id}/automation`)}>
+                    Create Rule
+                  </button>
+                )
               )}
             </div>
             {group.automationRule ? (
@@ -147,6 +148,9 @@ export default function GroupDetail() {
         </div>
 
         <h3 style={{ marginTop: "2.5rem" }}>Members ({group.members.length})</h3>
+        <p className="membership-hint">
+          {group.openMembership ? "Anyone" : "Admins"} can add members. Anyone can remove themselves.
+        </p>
         <div className="list">
           {group.members.map((member) => (
             <div key={member.id} className="list-item member-item">
@@ -155,33 +159,32 @@ export default function GroupDetail() {
                 <span className="member-title">· {member.title}</span>
               </Link>
               <div className="member-actions">
-                {member.isAdmin && !isAdmin && (
-                  <span className="admin-badge">Admin</span>
+                <span className={member.isAdmin ? "admin-badge" : "member-badge"}>
+                  {member.isAdmin ? "Admin" : "Member"}
+                </span>
+                {isAdmin && member.id !== user?.id && member.isAdmin && (
+                  <button
+                    className="remove-btn has-tooltip"
+                    onClick={() => handleDemoteMember(member.id)}
+                    data-tooltip="Move to Member"
+                  >
+                    ✕
+                  </button>
                 )}
                 {isAdmin && !member.isAdmin && (
                   <button
-                    className="admin-action-btn"
+                    className="promote-btn has-tooltip"
                     onClick={() => handlePromoteMember(member.id)}
+                    data-tooltip="Make Admin"
                   >
-                    Make Admin
+                    ↑
                   </button>
                 )}
-                {isAdmin && member.isAdmin && member.id !== user?.id && (
-                  <button
-                    className="admin-action-btn"
-                    onClick={() => handleDemoteMember(member.id)}
-                  >
-                    Remove as Admin
-                  </button>
-                )}
-                {isAdmin && member.isAdmin && member.id === user?.id && (
-                  <span className="admin-badge">Admin</span>
-                )}
-                {!member.isAdmin && (isAdmin || member.id === user?.id) && (
+                {(isAdmin || member.id === user?.id) && !member.isAdmin && (
                   <button
                     className="remove-btn has-tooltip"
                     onClick={() => handleRemoveMember(member.id)}
-                    data-tooltip="Remove Member"
+                    data-tooltip="Remove from Group"
                   >
                     ✕
                   </button>
