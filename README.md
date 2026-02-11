@@ -22,7 +22,7 @@ Create a new employee:
 
 They're automatically added to the group based on the rule:
 
-![Group Page](./docs/group_page_no_membership.png)
+![Group Page](./docs/group_page_with_automated_membership.png)
 
 ## Demo
 
