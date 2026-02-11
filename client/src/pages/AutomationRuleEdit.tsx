@@ -276,7 +276,7 @@ export default function AutomationRuleEdit() {
         <button className="btn-back" onClick={() => navigate(-1)}>
           ← {groupName}
         </button>
-        <h2>{existingRule ? "Edit Automated Membership" : "Create Automated Membership"}</h2>
+        <h2>{existingRule ? "Edit Automated Membership" : "Configure Automated Membership"}</h2>
         <div className="group-form automation-form">
           <span className="automation-form-label">Filters</span>
           <div className="automation-filters-list">
@@ -350,7 +350,7 @@ export default function AutomationRuleEdit() {
             )}
             <div className="automation-footer-right">
               <button type="button" className="btn-secondary" onClick={() => navigate(-1)}>Cancel</button>
-              <button type="button" className="btn-primary" onClick={handleSave}>Save</button>
+              <button type="button" className="btn-primary" onClick={handleSave}>Save Rule</button>
             </div>
           </div>
         </div>
