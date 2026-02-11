@@ -34,7 +34,7 @@ function nameToEmail(name: string): string {
 type Step = "name" | "new-employee";
 
 export default function Login() {
-  const [name, setName] = useState("");
+  const [name, setName] = useState("me");
   const [step, setStep] = useState<Step>("name");
   const [employeeStatus, setEmployeeStatus] = useState<"existing" | "new" | null>(null);
   const [needsPassword, setNeedsPassword] = useState(false);
