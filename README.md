@@ -2,7 +2,7 @@
 
 A portfolio project showcasing Group Management for employees at a company. Groups give access to tools and news. With Automated Membership, new hires are automatically placed into the correct groups.
 
-Shaped and vibe-coded by [Zack Burgess](https://github.com/zack-burgess) and [Claude](https://claude.ai). To learn more about the discovery and delivery process, visit the [case study](https://zackburgess.co/case-study).
+Shaped and vibe-coded by <a href="https://github.com/zack-burgess" target="_blank">Zack Burgess</a> and <a href="https://claude.ai" target="_blank">Claude</a>. To learn more about the discovery and delivery process, visit the <a href="https://zackburgess.co/case-study" target="_blank">case study</a>.
 
 **<a href="https://zack-burgess.github.io/groups-manager/" target="_blank">Try the live demo</a>**
 
@@ -41,7 +41,7 @@ The <a href="https://zack-burgess.github.io/groups-manager/" target="_blank">liv
    npm run dev
    ```
 
-The app runs entirely in the browser using [sql.js](https://github.com/sql-js/sql.js) (SQLite compiled to WebAssembly) — no backend required.
+The app runs entirely in the browser using <a href="https://github.com/sql-js/sql.js" target="_blank">sql.js</a> (SQLite compiled to WebAssembly) — no backend required.
 
 ## Tech Stack
 
@@ -52,7 +52,7 @@ The app runs entirely in the browser using [sql.js](https://github.com/sql-js/sq
 
 ## Design
 
-This project was shaped across two sessions with [breadboarding and UI sketches](https://basecamp.com/shapeup/1.3-chapter-04) from Shape Up.
+This project was shaped across two sessions with <a href="https://basecamp.com/shapeup/1.3-chapter-04" target="_blank">breadboarding and UI sketches</a> from Shape Up.
 
 1. **Groups Manager** — [DESIGN.md](./DESIGN.md) — flows, places, affordances, and UI sketches
-2. **Automated Membership** — [Product Pitch (PDF)](./docs/automated_membership_product_pitch.pdf) — problem, outcome, shape, breadboard, UI sketches, and systems diagram
+2. **Automated Membership** — <a href="./docs/automated_membership_product_pitch.pdf" target="_blank">Product Pitch (PDF)</a> — problem, outcome, shape, breadboard, UI sketches, and systems diagram
