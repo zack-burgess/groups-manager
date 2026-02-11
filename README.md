@@ -4,7 +4,7 @@ A portfolio project showcasing Group Management for employees at a company. Grou
 
 Shaped and vibe-coded by [Zack Burgess](https://github.com/zack-burgess) and [Claude](https://claude.ai). To learn more about the discovery and delivery process, visit the [case study](https://zackburgess.co/case-study).
 
-**[Try the live demo](https://zack-burgess.github.io/groups-manager/)**
+**<a href="https://zack-burgess.github.io/groups-manager/" target="_blank">Try the live demo</a>**
 
 ![Profile Page](./docs/profile_page.png)
 
@@ -26,7 +26,7 @@ They're automatically added to the group based on the rule:
 
 ## Demo
 
-The [live demo](https://zack-burgess.github.io/groups-manager/) is pre-seeded with employees, groups, and automation rules. Log in with any name to explore. Use **Reset Demo** from the gear menu to start fresh.
+The <a href="https://zack-burgess.github.io/groups-manager/" target="_blank">live demo</a> is pre-seeded with employees, groups, and automation rules. Log in with any name to explore. Use **Reset Demo** from the gear menu to start fresh.
 
 ## Running Locally
 
