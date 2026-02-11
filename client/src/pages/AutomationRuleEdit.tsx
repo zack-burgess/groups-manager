@@ -3,10 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../api";
 import type { AutomationRule } from "../api";
 import Banner from "../components/Banner";
+import AutomaticMembershipIcon from "../components/AutomaticMembershipIcon";
 
 const ATTRIBUTES = [
-  { value: "organization", label: "Organization" },
   { value: "title", label: "Title" },
+  { value: "organization", label: "Organization" },
   { value: "email", label: "Email" },
 ];
 
@@ -184,7 +185,7 @@ export default function AutomationRuleEdit() {
   const [existingRule, setExistingRule] = useState<AutomationRule | null>(null);
   const [loading, setLoading] = useState(true);
   const [groupName, setGroupName] = useState("");
-  const [filters, setFilters] = useState<FilterRow[]>([{ attribute: "organization", operator: "is", value: "" }]);
+  const [filters, setFilters] = useState<FilterRow[]>([{ attribute: "title", operator: "is", value: "" }]);
   const [logic, setLogic] = useState<"AND" | "OR">("AND");
   const [addOnUpdate, setAddOnUpdate] = useState(false);
   const [error, setError] = useState("");
@@ -213,6 +214,10 @@ export default function AutomationRuleEdit() {
     setFilters((prev) => {
       const updated = [...prev];
       updated[index] = { ...updated[index], [field]: value };
+      if (field === "attribute") {
+        const isMulti = MULTI_VALUE_OPERATORS.includes(updated[index].operator);
+        updated[index].value = isMulti ? "[]" : "";
+      }
       if (field === "operator") {
         const wasMulti = MULTI_VALUE_OPERATORS.includes(prev[index].operator);
         const isMulti = MULTI_VALUE_OPERATORS.includes(value);
@@ -225,7 +230,7 @@ export default function AutomationRuleEdit() {
   }
 
   function addFilter() {
-    setFilters((prev) => [...prev, { attribute: "organization", operator: "is", value: "" }]);
+    setFilters((prev) => [...prev, { attribute: "title", operator: "is", value: "" }]);
   }
 
   function removeFilter(index: number) {
@@ -276,7 +281,7 @@ export default function AutomationRuleEdit() {
         <button className="btn-back" onClick={() => navigate(-1)}>
           ← {groupName}
         </button>
-        <h2>{existingRule ? "Edit Automated Membership" : "Configure Automated Membership"}</h2>
+        <h2>{existingRule ? <><AutomaticMembershipIcon size={22} /> Edit Automatic Membership</> : <><AutomaticMembershipIcon size={22} /> Configure Automatic Membership</>}</h2>
         <div className="group-form automation-form">
           <span className="automation-form-label">Filters</span>
           <div className="automation-filters-list">

@@ -274,10 +274,15 @@ export const api = {
       );
       for (const group of starterGroups) {
         const alreadyMember = queryOne<{ id: number }>(
-          "SELECT group_id as id FROM group_members WHERE group_id = ? AND user_id = ?",
+          "SELECT group_id as id FROM group_members WHERE group_id = ? AND user_id = ? AND removed_at IS NULL",
           [group.id, userId]
         );
-        if (!alreadyMember) {
+        if (alreadyMember) {
+          run(
+            "UPDATE group_members SET is_admin = 1 WHERE group_id = ? AND user_id = ? AND removed_at IS NULL",
+            [group.id, userId]
+          );
+        } else {
           run(
             "INSERT INTO group_members (group_id, user_id, added_by_id, is_admin) VALUES (?, ?, ?, 1)",
             [group.id, userId, group.owner_id]
@@ -491,8 +496,8 @@ export const api = {
         `SELECT u.id, u.name, u.title, gm.is_admin
          FROM group_members gm JOIN users u ON u.id = gm.user_id
          WHERE gm.group_id = ? AND gm.removed_at IS NULL
-         ORDER BY gm.is_admin DESC, gm.added_at DESC`,
-        [id]
+         ORDER BY (u.id = ?) DESC, gm.is_admin DESC, u.name ASC`,
+        [id, getCurrentUserId()]
       );
 
       return {

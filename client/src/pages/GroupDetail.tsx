@@ -6,6 +6,7 @@ import { useAuth } from "../auth";
 import Banner from "../components/Banner";
 import GroupIcon from "../components/GroupIcon";
 import PersonIcon from "../components/PersonIcon";
+import AutomaticMembershipIcon from "../components/AutomaticMembershipIcon";
 
 function formatFilter(f: AutomationFilter) {
   const attrLabel: Record<string, string> = { email: "Email", title: "Title", organization: "Organization" };
@@ -84,8 +85,7 @@ export default function GroupDetail() {
 
   const handleAddMember = async (userId: number) => {
     await api.groups.addMember(Number(id), userId);
-    setMemberSearch("");
-    setMemberResults([]);
+    setMemberResults((prev) => prev.filter((p) => p.id !== userId));
     loadGroup();
   };
 
@@ -109,7 +109,7 @@ export default function GroupDetail() {
           <p className="group-description">{group.description}</p>
           <div className="automation-inline">
             <div className="automation-inline-header">
-              <span className="automation-inline-label">Automated Membership</span>
+              <span className="automation-inline-label"><AutomaticMembershipIcon size={16} /> Automatic Membership</span>
               {isAdmin && (
                 group.automationRule ? (
                   <button
@@ -152,7 +152,7 @@ export default function GroupDetail() {
           {group.openMembership ? "Anyone" : "Admins"} can add members. Anyone can remove themselves.
         </p>
         <div className="list">
-          {group.members.map((member) => (
+          {group.members.map((member, idx) => (
             <div key={member.id} className="list-item member-item">
               <Link to={`/profile/${member.id}`} className="member-link">
                 <PersonIcon size={16} /> {member.name}
@@ -162,9 +162,9 @@ export default function GroupDetail() {
                 <span className={member.isAdmin ? "admin-badge" : "member-badge"}>
                   {member.isAdmin ? "Admin" : "Member"}
                 </span>
-                {isAdmin && member.id !== user?.id && member.isAdmin && (
+                {isAdmin && member.isAdmin && (
                   <button
-                    className="remove-btn has-tooltip"
+                    className={`remove-btn has-tooltip${idx === 0 ? " tooltip-below" : ""}`}
                     onClick={() => handleDemoteMember(member.id)}
                     data-tooltip="Move to Member"
                   >
@@ -173,7 +173,7 @@ export default function GroupDetail() {
                 )}
                 {isAdmin && !member.isAdmin && (
                   <button
-                    className="promote-btn has-tooltip"
+                    className={`promote-btn has-tooltip${idx === 0 ? " tooltip-below" : ""}`}
                     onClick={() => handlePromoteMember(member.id)}
                     data-tooltip="Make Admin"
                   >
@@ -182,7 +182,7 @@ export default function GroupDetail() {
                 )}
                 {(isAdmin || member.id === user?.id) && !member.isAdmin && (
                   <button
-                    className="remove-btn has-tooltip"
+                    className={`remove-btn has-tooltip${idx === 0 ? " tooltip-below" : ""}`}
                     onClick={() => handleRemoveMember(member.id)}
                     data-tooltip="Remove from Group"
                   >
@@ -210,7 +210,11 @@ export default function GroupDetail() {
                   {memberResults.map((person) => (
                     <div key={person.id} className="member-result-item">
                       <span className="member-link"><PersonIcon size={14} /> {person.name} · {person.title}</span>
-                      <button onClick={() => handleAddMember(person.id)}>Add</button>
+                      <div className="member-actions">
+                        <span className="member-badge" style={{ visibility: "hidden" }}>Member</span>
+                        <button className="promote-btn has-tooltip" onClick={() => handleAddMember(person.id)} data-tooltip="Make Member">&#x2191;</button>
+                        <span className="remove-btn" style={{ visibility: "hidden" }}>✕</span>
+                      </div>
                     </div>
                   ))}
                 </div>

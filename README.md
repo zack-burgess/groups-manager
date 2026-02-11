@@ -1,6 +1,6 @@
-# Groups Manager with Automated Membership
+# Groups Manager with Automatic Membership
 
-A portfolio project showcasing Group Management for employees at a company. Groups give access to tools and news. With Automated Membership, new hires are automatically placed into the correct groups.
+A portfolio project showcasing Group Management for employees at a company. Groups give access to tools and news. With Automatic Membership, new hires are automatically placed into the correct groups.
 
 Shaped and vibe-coded by <a href="https://github.com/zack-burgess" target="_blank">Zack Burgess</a> and <a href="https://claude.ai" target="_blank">Claude</a>. To learn more about the discovery and delivery process, visit the <a href="https://zackburgess.co/case-study" target="_blank">case study</a>.
 
@@ -8,13 +8,13 @@ Shaped and vibe-coded by <a href="https://github.com/zack-burgess" target="_blan
 
 ![Profile Page](./docs/profile_page.png)
 
-## Automated Membership
+## Automatic Membership
 
-Every week, People Ops manually tracks new hires and adds them to the right groups. It's error-prone and doesn't scale. With Automated Membership, group admins define rules once — and new employees are placed into the correct groups automatically.
+Every week, People Ops manually tracks new hires and adds them to the right groups. It's error-prone and doesn't scale. With Automatic Membership, group admins define rules once — and new employees are placed into the correct groups automatically.
 
 Set filters by Organization, Title, or Email with AND/OR logic:
 
-<img src="./docs/configure_automated_membership.png" alt="Configure Automated Membership" width="650">
+<img src="./docs/configure_automatic_membership.png" alt="Configure Automatic Membership" width="650">
 
 Create a new employee:
 
@@ -22,7 +22,7 @@ Create a new employee:
 
 They're automatically added to the group based on the rule:
 
-<img src="./docs/group_page_with_automated_membership.png" alt="Group Page" width="650">
+<img src="./docs/group_with_automatic_membership.png" alt="Group Page" width="650">
 
 ## Demo
 
@@ -55,4 +55,4 @@ The app runs entirely in the browser using <a href="https://github.com/sql-js/sq
 This project was shaped across two sessions with <a href="https://basecamp.com/shapeup/1.3-chapter-04" target="_blank">breadboarding and UI sketches</a> from Shape Up. Read the full <a href="https://zackburgess.co/case-study" target="_blank">case study</a> for more on the discovery and delivery process.
 
 1. **Groups Manager** — [DESIGN.md](./DESIGN.md) — flows, places, affordances, and UI sketches
-2. **Automated Membership** — <a href="./docs/automated_membership_product_pitch.pdf" target="_blank">Product Pitch (PDF)</a> — problem, outcome, shape, breadboard, UI sketches, and systems diagram
+2. **Automatic Membership** — <a href="./docs/automatic_membership_product_pitch.pdf" target="_blank">Product Pitch (PDF)</a> — problem, outcome, shape, breadboard, UI sketches, and systems diagram

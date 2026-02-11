@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api";
 import { useAuth } from "../auth";
+import AutomaticMembershipIcon from "../components/AutomaticMembershipIcon";
 
 const TITLES = [
   "Hiring Manager",
@@ -136,7 +137,7 @@ export default function Login() {
   return (
     <div className="auth-page">
       <form className="auth-form" onSubmit={handleLogin}>
-        <h1>Groups Manager<br /><span className="auth-subtitle-heading">with Automated Membership</span></h1>
+        <h1>Groups Manager<br /><span className="auth-subtitle-heading">with Automatic Membership <AutomaticMembershipIcon size={20} /></span></h1>
         <input
           type="text"
           placeholder="Please enter your name..."

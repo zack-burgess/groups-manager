@@ -1,3 +1,5 @@
+import AutomaticMembershipIcon from "./AutomaticMembershipIcon";
+
 interface Props {
   onClose: () => void;
 }
@@ -27,10 +29,10 @@ export default function AboutModal({ onClose }: Props) {
             </a>
           </p>
           <hr className="about-divider" />
-          <h3>Try Automated Membership</h3>
+          <h3><AutomaticMembershipIcon size={18} /> Try Automatic Membership</h3>
           <ol className="about-tutorial">
-            <li>To configure Automated Membership, you must be an <strong>Admin</strong> for the group. You are automatically an Admin of the &#x2B50; A-Team and Recruiting, or you can create your own group.</li>
-            <li>Open the group and <strong>Create Rule</strong> for Automated Membership.</li>
+            <li>To configure Automatic Membership, you must be an <strong>Admin</strong> for the group. You are automatically an Admin of the &#x2B50; A-Team and Recruiting, or you can create your own group.</li>
+            <li>Open the group and <strong>Create Rule</strong> for Automatic Membership.</li>
             <li>Create a <strong>New Employee</strong> from the &#x2699;&#xFE0E; gear icon in the top right.</li>
             <li>View the <strong>Group's Members</strong> to see they were added, based upon your Rule Filter.</li>
           </ol>
