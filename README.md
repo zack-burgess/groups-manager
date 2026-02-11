@@ -26,9 +26,7 @@ They're automatically added to the group based on the rule:
 
 ## Demo
 
-The app is pre-seeded with 12 employees across multiple organizations (R&D, HR, Marketing, Sales, Finance, Operations) and 8 groups with automation rules already configured. Log in with any name to explore.
-
-Use **Reset Demo** from the gear menu to revert all changes and start fresh.
+The [live demo](https://zack-burgess.github.io/groups-manager/) is pre-seeded with employees, groups, and automation rules. Log in with any name to explore. Use **Reset Demo** from the gear menu to start fresh.
 
 ## Running Locally
 
