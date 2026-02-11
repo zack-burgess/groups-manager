@@ -1,7 +1,6 @@
-# Groups Manager
-### with Automated Membership
+# Groups Manager with Automated Membership
 
-A groups management app for employees at a company. Users can log in, view profiles, create and manage groups, and search for people and groups.
+A portfolio project showcasing Group Management for employees at a company. Groups give access to tools and news. With Automated Membership, new hires are automatically placed into the correct groups.
 
 Shaped and vibe-coded by [Zack Burgess](https://github.com/zack-burgess) and [Claude](https://claude.ai). To learn more about the discovery and delivery process, visit the [case study](https://zackburgess.co/case-study).
 
