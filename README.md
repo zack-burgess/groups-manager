@@ -10,15 +10,19 @@ Shaped and vibe-coded by [Zack Burgess](https://github.com/zack-burgess) and [Cl
 
 ## Automated Membership
 
-Groups support configurable rules that automatically add employees as members. As a group Admin, configure filters by Organization, Title, or Email — with AND/OR logic — and new employees matching the rule are added to the group on creation.
+Every week, People Ops manually tracks new hires and adds them to the right groups. It's error-prone and doesn't scale. With Automated Membership, group admins define rules once — and new employees are placed into the correct groups automatically.
 
-![Group Page](./docs/group_page_no_membership.png)
+Set filters by Organization, Title, or Email with AND/OR logic:
 
 ![Configure Automated Membership](./docs/configure_automated_membership.png)
 
-New employees are created from the gear icon in the top right. When a new employee matches a group's rule filters, they are automatically added as a member.
+Create a new employee:
 
 ![Create Employee](./docs/create_employee.png)
+
+They're automatically added to the group based on the rule:
+
+![Group Page](./docs/group_page_no_membership.png)
 
 ## Demo
 
