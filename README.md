@@ -14,7 +14,7 @@ Every week, People Ops manually tracks new hires and adds them to the right grou
 
 Set filters by Organization, Title, or Email with AND/OR logic:
 
-![Configure Automated Membership](./docs/configure_automated_membership.png)
+<img src="./docs/configure_automated_membership.png" alt="Configure Automated Membership" width="650">
 
 Create a new employee:
 
