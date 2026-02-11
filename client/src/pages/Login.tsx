@@ -148,6 +148,8 @@ export default function Login() {
           }}
           required
           autoFocus
+          autoComplete="off"
+          name="login-name"
         />
         {employeeStatus === "existing" && (
           <p className="employee-status status-existing">welcome back!</p>
