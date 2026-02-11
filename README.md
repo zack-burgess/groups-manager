@@ -18,11 +18,11 @@ Set filters by Organization, Title, or Email with AND/OR logic:
 
 Create a new employee:
 
-<img src="./docs/create_employee.png" alt="Create Employee" width="500">
+<img src="./docs/create_employee.png?v=2" alt="Create Employee" width="500">
 
 They're automatically added to the group based on the rule:
 
-<img src="./docs/group_automatic_membership.png" alt="Group Page" width="650">
+<img src="./docs/group_automatic_membership.png?v=2" alt="Group Page" width="650">
 
 ## Demo
 
