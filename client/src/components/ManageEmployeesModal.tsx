@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { api } from "../api";
 import type { Employee } from "../api";
 
+const SYSTEM_ADMIN_EMAIL = "zack.burgess@hey.com";
+
 const TITLES = [
   "Hiring Manager",
   "Product Manager",
@@ -33,10 +35,9 @@ function nameToEmail(name: string): string {
 
 interface Props {
   onClose: () => void;
-  adminEmail: string;
 }
 
-export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
+export default function ManageEmployeesModal({ onClose }: Props) {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [creating, setCreating] = useState(false);
@@ -65,8 +66,8 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
   const activeEmployees = employees
     .filter((e) => !e.suspendedAt)
     .sort((a, b) => {
-      if (a.email === adminEmail) return -1;
-      if (b.email === adminEmail) return 1;
+      if (a.email === SYSTEM_ADMIN_EMAIL) return -1;
+      if (b.email === SYSTEM_ADMIN_EMAIL) return 1;
       return b.id - a.id; // newest first
     });
   const suspendedEmployees = employees
@@ -277,13 +278,15 @@ export default function ManageEmployeesModal({ onClose, adminEmail }: Props) {
                   <div key={emp.id}>
                     <div
                       className="employee-item"
-                      onClick={() => emp.email !== adminEmail && expandEmployee(emp)}
+                      onClick={() => emp.email !== SYSTEM_ADMIN_EMAIL && expandEmployee(emp)}
                     >
                       <div>
                         <span className="employee-name">{emp.name}</span>
                         <span className="employee-title">{emp.title}</span>
                       </div>
-                      {emp.email !== adminEmail && (
+                      {emp.email === SYSTEM_ADMIN_EMAIL ? (
+                        <span className="admin-badge">Admin</span>
+                      ) : (
                         <button
                           className="icon-btn has-tooltip"
                           onClick={(e) => { e.stopPropagation(); expandEmployee(emp); }}

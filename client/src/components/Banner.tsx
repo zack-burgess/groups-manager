@@ -6,7 +6,7 @@ import ManageEmployeesModal from "./ManageEmployeesModal";
 import AboutModal from "./AboutModal";
 
 export default function Banner() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [gearOpen, setGearOpen] = useState(false);
   const [showEmployees, setShowEmployees] = useState(false);
@@ -91,7 +91,6 @@ export default function Banner() {
       {showEmployees && (
         <ManageEmployeesModal
           onClose={() => setShowEmployees(false)}
-          adminEmail={user?.email || ""}
         />
       )}
       {showAbout && <AboutModal onClose={() => setShowAbout(false)} />}
