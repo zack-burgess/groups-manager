@@ -18,7 +18,7 @@ Set filters by Organization, Title, or Email with AND/OR logic:
 
 Create a new employee:
 
-![Create Employee](./docs/create_employee.png)
+<img src="./docs/create_employee.png" alt="Create Employee" width="500">
 
 They're automatically added to the group based on the rule:
 
