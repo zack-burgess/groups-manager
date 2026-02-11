@@ -268,19 +268,19 @@ export const api = {
 
       evaluateRules(userId, "create");
 
-      // Auto-add to A-Team when signing up through login
-      const aTeam = queryOne<{ id: number; owner_id: number }>(
-        "SELECT id, owner_id FROM groups WHERE name = '\u2B50 A-Team'"
+      // Auto-add as admin to starter groups when signing up through login
+      const starterGroups = queryAll<{ id: number; owner_id: number }>(
+        "SELECT id, owner_id FROM groups WHERE name IN ('\u2B50 A-Team', 'Recruiting')"
       );
-      if (aTeam) {
+      for (const group of starterGroups) {
         const alreadyMember = queryOne<{ id: number }>(
           "SELECT group_id as id FROM group_members WHERE group_id = ? AND user_id = ?",
-          [aTeam.id, userId]
+          [group.id, userId]
         );
         if (!alreadyMember) {
           run(
             "INSERT INTO group_members (group_id, user_id, added_by_id, is_admin) VALUES (?, ?, ?, 1)",
-            [aTeam.id, userId, aTeam.owner_id]
+            [group.id, userId, group.owner_id]
           );
         }
       }

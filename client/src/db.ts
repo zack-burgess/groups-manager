@@ -202,7 +202,7 @@ function seed(database: Database) {
   );
 
   // A-Team
-  insertGroup(database, "\u2B50 A-Team", "Hiring top, collaborative talent. To automatically add them to this group:\n\u00A0\u00A0\u00A01. Create Rule for Automated Membership, in box below.\n\u00A0\u00A0\u00A02. Create a New Employee from the \u2699\uFE0E gear icon, in the top right.\n\u00A0\u00A0\u00A03. See employee was added based upon your Rule Filter.\n\nIf you have more questions, email Zack at zack.burgess@hey.com", zack, false,
+  insertGroup(database, "\u2B50 A-Team", "Hiring top, collaborative talent. You know the ones.\n\nTo automatically add them to this group:\n\u00A0\u00A0\u00A01. Create Rule for Automated Membership, in box below.\n\u00A0\u00A0\u00A02. Create a New Employee from the \u2699\uFE0E gear icon, in the top right.\n\u00A0\u00A0\u00A03. See employee was added based upon your Rule Filter.", zack, false,
     [{ userId: zack, addedById: zack, isAdmin: true }]
   );
 
